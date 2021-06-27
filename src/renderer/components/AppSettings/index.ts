@@ -19,6 +19,12 @@ export class AppSettings extends LitElement {
       padding-left: 0;
       list-style: none;
     }
+
+    svg {
+      display: block;
+      width: 1.5rem;
+      fill: currentColor;
+    }
   `;
 
   @state()
@@ -40,6 +46,13 @@ export class AppSettings extends LitElement {
     return html`<h1>Settings</h1>
       <h2>Audio Sources</h2>
       <button @click="${this.addFolderToLibrary}">Add</button>
+      <button @click="${this.rebuildAudioData}">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M2 12a9 9 0 0 0 9 9c2.39 0 4.68-.94 6.4-2.6l-1.5-1.5A6.706 6.706 0 0 1 11 19c-6.24 0-9.36-7.54-4.95-11.95C10.46 2.64 18 5.77 18 12h-3l4 4h.1l3.9-4h-3a9 9 0 0 0-18 0z"
+          ></path>
+        </svg>
+      </button>
       ${this.libraryFolders.length
         ? html`<ul>
             ${repeat(
@@ -56,5 +69,10 @@ export class AppSettings extends LitElement {
   @eventOptions({ passive: true })
   private addFolderToLibrary() {
     window.settings.addFolderToLibrary();
+  }
+
+  @eventOptions({ passive: true })
+  private rebuildAudioData() {
+    window.audioData.rebuild();
   }
 }

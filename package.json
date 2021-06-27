@@ -22,6 +22,7 @@
     "electron": "^13.0.1",
     "electron-store": "^8.0.0",
     "lit": "^2.0.0-rc.2",
-    "music-metadata": "^7.8.7"
+    "music-metadata": "^7.8.7",
+    "totalist": "^2.0.0"
   }
 }

@@ -24,3 +24,9 @@ const settings = {
 };
 export type Settings = typeof settings;
 contextBridge.exposeInMainWorld('settings', settings);
+
+const audioData = {
+  rebuild: () => ipcRenderer.send('rebuildAudioData'),
+};
+export type AudioData = typeof audioData;
+contextBridge.exposeInMainWorld('audioData', audioData);

@@ -2,7 +2,7 @@ import { join } from 'path';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
 import { settingsStore } from './settings';
-import './database';
+import { buildData } from './database/buildData';
 // @ts-ignore
 import indexHtml from '../renderer/index.html';
 
@@ -72,6 +72,8 @@ const createWindow = () => {
     // stop sending/listening to events when ui gets reloaded (mainly for development)
     win.webContents.once('did-start-loading', unsubscribe);
   });
+
+  ipcMain.on('rebuildAudioData', buildData);
 };
 
 app.whenReady().then(() => {
