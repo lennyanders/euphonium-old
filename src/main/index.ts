@@ -2,6 +2,7 @@ import { join } from 'path';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
 import { settingsStore } from './settings';
+import './database';
 // @ts-ignore
 import indexHtml from '../renderer/index.html';
 

@@ -5,16 +5,20 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node scripts/serve.js"
+    "start": "node scripts/serve.js",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/better-sqlite3": "^5.4.1",
+    "electron-rebuild": "^2.3.5",
     "electronmon": "^2.0.1",
     "esbuild": "^0.12.5"
   },
   "dependencies": {
+    "better-sqlite3": "^7.4.1",
     "electron": "^13.0.1",
     "electron-store": "^8.0.0",
     "lit": "^2.0.0-rc.2",
