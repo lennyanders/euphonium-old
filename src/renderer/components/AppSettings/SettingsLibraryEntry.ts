@@ -1,5 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, eventOptions, property } from 'lit/decorators.js';
+import { mdiClose } from '@mdi/js';
+import { icon } from '../../utils';
 
 @customElement('settings-library-entry')
 export class SettingsLibraryEntry extends LitElement {
@@ -27,13 +29,7 @@ export class SettingsLibraryEntry extends LitElement {
 
   render() {
     return html`${this.folder}
-      <button @click="${this.removeFolderFromLibrary}">
-        <svg viewBox="0 0 24 24">
-          <path
-            d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"
-          ></path>
-        </svg>
-      </button>`;
+      <button @click="${this.removeFolderFromLibrary}">${icon(mdiClose)}</button>`;
   }
 
   @eventOptions({ passive: true })
