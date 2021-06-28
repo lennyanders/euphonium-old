@@ -14,8 +14,7 @@ import { icon } from '../utils';
 export class AppMainNavigation extends LitElement {
   static styles = css`
     :host {
-      margin-top: -2rem;
-      padding-top: 2rem;
+      padding-top: 28px;
       background-color: #111;
     }
 

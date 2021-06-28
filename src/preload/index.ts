@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type * as Tables from '../main/database/Tables';
 
 const windowActions = {
   minimize: () => ipcRenderer.send('minimize'),
@@ -27,6 +28,15 @@ contextBridge.exposeInMainWorld('settings', settings);
 
 const audioData = {
   rebuild: () => ipcRenderer.send('rebuildAudioData'),
+  getTracks: (
+    cb: (tracks: Pick<Tables.track, 'path' | 'artists' | 'title' | 'duration'>[]) => void,
+  ) => {
+    ipcRenderer.send('getTracks');
+    ipcRenderer.on(
+      'tracksChanged',
+      (_, tracks: Pick<Tables.track, 'path' | 'artists' | 'title' | 'duration'>[]) => cb(tracks),
+    );
+  },
 };
 export type AudioData = typeof audioData;
 contextBridge.exposeInMainWorld('audioData', audioData);

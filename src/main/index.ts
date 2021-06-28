@@ -3,6 +3,7 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
 import { settingsStore } from './settings';
 import { buildData } from './database/buildData';
+import { getTracks } from './database/getTracks';
 // @ts-ignore
 import indexHtml from '../renderer/index.html';
 
@@ -19,7 +20,7 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile(indexHtml, { hash: 'settings' });
+  win.loadFile(indexHtml, { hash: 'songs' });
 
   win.webContents.openDevTools({ mode: 'detach' });
 
@@ -74,6 +75,10 @@ const createWindow = () => {
   });
 
   ipcMain.on('rebuildAudioData', buildData);
+  ipcMain.on('getTracks', (event) => {
+    const send = () => event.sender.send('tracksChanged', getTracks());
+    send();
+  });
 };
 
 app.whenReady().then(() => {
