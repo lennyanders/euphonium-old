@@ -5,9 +5,6 @@ import { customElement, eventOptions, state } from 'lit/decorators.js';
 export class AppTitleBar extends LitElement {
   static styles = css`
     :host {
-      position: fixed;
-      left: 0;
-      right: 0;
       -webkit-app-region: drag;
       display: flex;
       justify-content: flex-end;

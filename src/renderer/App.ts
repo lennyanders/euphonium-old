@@ -11,39 +11,57 @@ import './components/AppSettings';
 export class App extends LitElement {
   static styles = css`
     :host {
-      display: flex;
+      display: grid;
+      grid-template: 'title title' auto 'nav content' 1fr 'player player' auto / auto 1fr;
       height: 100%;
       overflow-y: hidden;
     }
 
+    app-title-bar {
+      grid-area: title;
+      z-index: 1;
+    }
+
+    app-main-navigation {
+      grid-area: nav;
+    }
+
     main {
-      flex: 1;
-      overflow-y: auto;
-      /* hide bottom scroll button */
-      margin-bottom: -28px;
-      padding-bottom: 28px;
+      grid-area: content;
     }
 
     main > * {
       display: block;
     }
 
-    /* scroll buttons to allow space on top */
-    main::-webkit-scrollbar-button {
-      height: 28px;
+    app-main-navigation,
+    main {
+      overflow-y: auto;
+      margin: -2rem 0;
+      padding: 2rem 0;
     }
 
     main::-webkit-scrollbar {
       width: 0.75rem;
     }
-
+    main::-webkit-scrollbar-button {
+      height: 2rem;
+    }
     main::-webkit-scrollbar-thumb {
       background-color: #333;
+    }
+
+    .player {
+      z-index: 1;
+      grid-area: player;
+      flex: 0 0 100%;
+      height: 30px;
+      background-color: red;
     }
   `;
 
   @state()
-  private page = html`404`;
+  private page = html`1`;
 
   constructor() {
     super();
@@ -56,6 +74,7 @@ export class App extends LitElement {
   render() {
     return html`<app-title-bar></app-title-bar>
       <app-main-navigation></app-main-navigation>
-      <main>${this.page}</main>`;
+      <main>${this.page}</main>
+      <div class="player"></div>`;
   }
 }

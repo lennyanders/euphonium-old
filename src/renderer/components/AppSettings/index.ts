@@ -13,6 +13,10 @@ export class AppSettings extends LitElement {
       padding: 0.5rem 3rem;
     }
 
+    h1 {
+      margin-top: 0;
+    }
+
     ul {
       padding-left: 0;
       list-style: none;
