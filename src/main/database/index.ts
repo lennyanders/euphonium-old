@@ -1,15 +1,14 @@
 import { join } from 'path';
 import { readFileSync } from 'fs';
-import { app } from 'electron';
 import SqliteDatabase from 'better-sqlite3';
 import type * as Tables from './Tables';
+import { userDataPath } from '../consts';
 import { table, sqlite_master } from './utils/selector';
 
 // @ts-ignore
 import sqlSetup from './setup.sql';
 
-const databasePath = join(app.getPath('userData'), 'Euphonium.db');
-const database = new SqliteDatabase(databasePath);
+const database = new SqliteDatabase(join(userDataPath, 'Euphonium.db'));
 
 const statement = database.prepare(
   `SELECT ${sqlite_master('name')} FROM ${table('sqlite_master')} WHERE ${sqlite_master(

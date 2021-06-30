@@ -3,6 +3,15 @@ import { execSync } from 'child_process';
 import { build } from 'esbuild';
 import electronmon from 'electronmon';
 
+/** @type {import('esbuild').BuildOptions} */
+const sharedBuildOptions = {
+  bundle: true,
+  minify: true,
+  sourcemap: 'inline',
+  logLevel: 'info',
+  define: { 'process.env.NODE_ENV': JSON.stringify('development') },
+};
+
 (async () => {
   try {
     await rm('dist', { recursive: true, force: true });
@@ -22,42 +31,33 @@ import electronmon from 'electronmon';
   }
 
   await build({
+    ...sharedBuildOptions,
     entryPoints: ['src/main/index.ts'],
     platform: 'node',
     format: 'cjs',
-    bundle: true,
-    minify: true,
-    sourcemap: 'inline',
     loader: { '.html': 'file', '.sql': 'file' },
     external: ['electron'],
     outfile: 'dist/main.cjs',
     watch: { onRebuild: () => app?.restart() },
-    logLevel: 'info',
   });
 
   await build({
+    ...sharedBuildOptions,
     entryPoints: ['src/preload/index.ts'],
     platform: 'node',
     format: 'cjs',
-    bundle: true,
-    minify: true,
-    sourcemap: 'inline',
     external: ['electron'],
     outfile: 'dist/preload.js',
     watch: { onRebuild: () => app?.reload() },
-    logLevel: 'info',
   });
 
   await build({
+    ...sharedBuildOptions,
     entryPoints: ['src/renderer/index.ts'],
     format: 'esm',
-    bundle: true,
-    minify: true,
-    sourcemap: 'inline',
     loader: { '.html': 'file' },
     outfile: 'dist/renderer.js',
     watch: { onRebuild: () => app?.reload() },
-    logLevel: 'info',
   });
 
   const app = await electronmon({

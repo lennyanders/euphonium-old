@@ -1,5 +1,6 @@
 import Store from 'electron-store';
 import type { Schema } from 'electron-store';
+import { userDataPath } from './consts';
 
 interface Settings {
   libraryFolders: string[];
@@ -7,6 +8,7 @@ interface Settings {
 
 export const settingsStore = new Store({
   name: 'settings',
+  cwd: userDataPath,
   schema: <Schema<Settings>>{
     libraryFolders: {
       type: 'array',
