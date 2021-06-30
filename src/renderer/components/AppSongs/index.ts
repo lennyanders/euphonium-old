@@ -10,17 +10,14 @@ export class App extends LitElement {
     :host {
       padding: 0.5rem 3rem;
     }
+
+    h1 {
+      margin-top: 0;
+    }
   `;
 
   @state()
-  tracks = window.audioData.getTracks((tracks) => ((this.tracks = tracks), console.log(tracks)));
-
-  private getTime(time: number) {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  }
+  tracks = window.audioData.getTracks((tracks) => (this.tracks = tracks));
 
   render() {
     return html`<h1>Songs (${this.tracks.length})</h1>
@@ -29,14 +26,7 @@ export class App extends LitElement {
             ${repeat(
               this.tracks,
               (track) => track.path,
-              (track) =>
-                html`<li>
-                  <song-entry
-                    artists="${track.artists}"
-                    title="${track.title}"
-                    duration="${track.duration}"
-                  ></song-entry>
-                </li>`,
+              (track) => html`<li><song-entry .track="${track}"></song-entry></li>`,
             )}
           </ul>`
         : html`<p>Start adding sources and listening to music!</p>`} `;
