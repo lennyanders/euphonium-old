@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS track (
-   id INTEGER NOT NULL UNIQUE,
-   path TEXT NOT NULL,
+   path TEXT NOT NULL UNIQUE,
    fileName TEXT NOT NULL,
    dateFileModified INTEGER,
    duration INTEGER NOT NULL,
@@ -13,5 +12,5 @@ CREATE TABLE IF NOT EXISTS track (
    title TEXT,
    album TEXT,
    albumArtists TEXT,
-   PRIMARY KEY (id)
+   PRIMARY KEY (path)
 );

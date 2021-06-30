@@ -6,11 +6,7 @@ export interface sqlite_master {
   sql: string;
 }
 
-interface IdTable {
-  id: number;
-}
-
-export interface track extends IdTable {
+export interface track {
   path: string;
   fileName: string;
   dateFileModified: number;
