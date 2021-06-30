@@ -2,7 +2,7 @@ import Store from 'electron-store';
 import type { Schema } from 'electron-store';
 import { userDataPath } from './consts';
 
-interface Settings {
+export interface Settings {
   libraryFolders: string[];
 }
 

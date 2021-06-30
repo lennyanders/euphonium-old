@@ -30,23 +30,19 @@ export class AppSettings extends LitElement {
   `;
 
   @state()
-  private libraryFolders: string[] = [];
-
-  constructor() {
-    super();
-
-    window.settings.getLibraryFolders((folders) => (this.libraryFolders = folders));
-  }
+  private settings = window.settings.getSettings(
+    (settingsChanges) => (this.settings = { ...this.settings, ...settingsChanges }),
+  );
 
   render() {
     return html`<h1>Settings</h1>
       <h2>Audio Sources</h2>
       <button @click="${this.addFolderToLibrary}">Add</button>
       <button @click="${this.rebuildAudioData}">${icon(mdiReload)}</button>
-      ${this.libraryFolders.length
+      ${this.settings.libraryFolders.length
         ? html`<ul>
             ${repeat(
-              this.libraryFolders,
+              this.settings.libraryFolders,
               (folder) => folder,
               (folder) => html`<li>
                 <settings-library-entry folder="${folder}"></settings-library-entry>

@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
-import { settingsStore } from './settings';
+import { Settings, settingsStore } from './settings';
 import { buildData } from './database/buildData';
 import { getTracks } from './database/getTracks';
 // @ts-ignore
@@ -62,16 +62,17 @@ const createWindow = () => {
     settingsStore.set('libraryFolders', [...folders]);
   });
 
-  ipcMain.on('getLibraryFolders', (event) => {
-    const send = () => {
-      event.sender.send('libraryFoldersChanged', settingsStore.store.libraryFolders);
-    };
+  ipcMain.on('getSettings', (event) => {
+    const unsubscribers = Object.keys(settingsStore.store).map((key) => {
+      return settingsStore.onDidChange(<keyof Settings>key, (newValue) => {
+        event.sender.send('settingsChanged', <Partial<Settings>>{ [key]: newValue });
+      });
+    });
 
-    const unsubscribe = settingsStore.onDidChange('libraryFolders', send);
-    send();
+    event.returnValue = settingsStore.store;
 
     // stop sending/listening to events when ui gets reloaded (mainly for development)
-    win.webContents.once('did-start-loading', unsubscribe);
+    win.webContents.once('did-start-loading', () => unsubscribers.forEach((u) => u()));
   });
 
   ipcMain.on('rebuildAudioData', buildData);

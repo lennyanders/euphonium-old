@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { Settings as AppSettings } from '../main/settings';
 import type { TrackModel } from '../main/database/getTracks';
 
 const windowActions = {
@@ -18,9 +19,9 @@ contextBridge.exposeInMainWorld('windowActions', windowActions);
 const settings = {
   addFolderToLibrary: () => ipcRenderer.send('addFolderToLibrary'),
   removeFolderFromLibrary: (folder: string) => ipcRenderer.send('removeFolderFromLibrary', folder),
-  getLibraryFolders: (cb: (folders: string[]) => void) => {
-    ipcRenderer.send('getLibraryFolders');
-    ipcRenderer.on('libraryFoldersChanged', (_, folders: string[]) => cb(folders));
+  getSettings: (cb: (settings: Partial<AppSettings>) => void) => {
+    ipcRenderer.on('settingsChanged', (_, settings: Partial<AppSettings>) => cb(settings));
+    return ipcRenderer.sendSync('getSettings') as AppSettings;
   },
 };
 export type Settings = typeof settings;
