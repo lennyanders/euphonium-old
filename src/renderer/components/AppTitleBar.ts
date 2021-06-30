@@ -41,12 +41,9 @@ export class AppTitleBar extends LitElement {
   `;
 
   @state()
-  private isMaximized = false;
-
-  constructor() {
-    super();
-    window.windowActions.getMaximizedState((isMaximized) => (this.isMaximized = isMaximized));
-  }
+  private isMaximized = window.windowActions.getMaximizedState(
+    (isMaximized) => (this.isMaximized = isMaximized),
+  );
 
   render() {
     return html`<div class="window-actions">

@@ -8,8 +8,8 @@ const windowActions = {
   close: () => ipcRenderer.send('close'),
   /** Also fires initially */
   getMaximizedState: (cb: (isMaximized: boolean) => void) => {
-    ipcRenderer.send('getMaximizedState');
     ipcRenderer.on('maximizedStateChanged', (_, isMaximized: boolean) => cb(isMaximized));
+    return ipcRenderer.sendSync('getMaximizedState') as boolean;
   },
 };
 export type WindowActions = typeof windowActions;

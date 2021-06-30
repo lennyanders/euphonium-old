@@ -36,7 +36,7 @@ const createWindow = () => {
     win.on('minimize', send);
     win.on('unmaximize', send);
     win.on('restore', send);
-    send();
+    event.returnValue = win.isMaximized();
 
     // stop sending/listening to events when ui gets reloaded (mainly for development)
     win.webContents.once('did-start-loading', () => {
