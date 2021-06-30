@@ -31,11 +31,14 @@ const audioData = {
   getTracks: (
     cb: (tracks: Pick<Tables.track, 'path' | 'artists' | 'title' | 'duration'>[]) => void,
   ) => {
-    ipcRenderer.send('getTracks');
     ipcRenderer.on(
       'tracksChanged',
       (_, tracks: Pick<Tables.track, 'path' | 'artists' | 'title' | 'duration'>[]) => cb(tracks),
     );
+    return ipcRenderer.sendSync('getTracks') as Pick<
+      Tables.track,
+      'path' | 'artists' | 'title' | 'duration'
+    >[];
   },
 };
 export type AudioData = typeof audioData;

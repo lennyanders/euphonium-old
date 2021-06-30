@@ -1,7 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat';
-import type * as Tables from '../../../main/database/Tables';
+
+import './SongEntry';
 
 @customElement('app-songs')
 export class App extends LitElement {
@@ -12,13 +13,7 @@ export class App extends LitElement {
   `;
 
   @state()
-  tracks: Pick<Tables.track, 'path' | 'artists' | 'title' | 'duration'>[] = [];
-
-  constructor() {
-    super();
-
-    window.audioData.getTracks((tracks) => ((this.tracks = tracks), console.log(tracks)));
-  }
+  tracks = window.audioData.getTracks((tracks) => ((this.tracks = tracks), console.log(tracks)));
 
   private getTime(time: number) {
     const minutes = Math.floor(time / 60);
@@ -35,7 +30,13 @@ export class App extends LitElement {
               this.tracks,
               (track) => track.path,
               (track) =>
-                html`<li>${track.artists} - ${track.title} (${this.getTime(track.duration)})</li>`,
+                html`<li>
+                  <song-entry
+                    artists="${track.artists}"
+                    title="${track.title}"
+                    duration="${track.duration}"
+                  ></song-entry>
+                </li>`,
             )}
           </ul>`
         : html`<p>Start adding sources and listening to music!</p>`} `;
