@@ -24,7 +24,7 @@ export class SettingsLibraryEntry extends LitElement {
     }
   `;
 
-  @property()
+  @property({ attribute: false })
   folder: string = '';
 
   render() {

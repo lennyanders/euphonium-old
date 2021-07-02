@@ -2,7 +2,6 @@ import { basename } from 'path';
 import { totalist } from 'totalist';
 import { parseFile } from 'music-metadata';
 import { settingsStore } from '../settings';
-import '../database';
 import { database } from '../database';
 import type * as Tables from './Tables';
 import { table } from './utils/selector';

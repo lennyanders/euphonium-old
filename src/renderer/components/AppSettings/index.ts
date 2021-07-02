@@ -45,7 +45,7 @@ export class AppSettings extends LitElement {
               this.settings.libraryFolders,
               (folder) => folder,
               (folder) => html`<li>
-                <settings-library-entry folder="${folder}"></settings-library-entry>
+                <settings-library-entry .folder="${folder}"></settings-library-entry>
               </li>`,
             )}
           </ul>`
