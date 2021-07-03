@@ -4,6 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { router } from './router';
 import './components/AppTitleBar';
 import './components/AppMainNavigation';
+import './components/AppPlayer';
 import './components/AppSongs';
 import './components/AppSettings';
 
@@ -51,12 +52,9 @@ export class App extends LitElement {
       background-color: #333;
     }
 
-    .player {
+    app-player {
       z-index: 1;
       grid-area: player;
-      flex: 0 0 100%;
-      height: 30px;
-      background-color: red;
     }
   `;
 
@@ -75,6 +73,6 @@ export class App extends LitElement {
     return html`<app-title-bar></app-title-bar>
       <app-main-navigation></app-main-navigation>
       <main>${this.page}</main>
-      <div class="player"></div>`;
+      <app-player></app-player>`;
   }
 }
