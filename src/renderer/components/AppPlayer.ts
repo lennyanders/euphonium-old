@@ -27,11 +27,39 @@ export class AppMainNavigation extends LitElement {
 
     .progress {
       grid-area: progress;
+      position: relative;
+    }
+
+    .progress__value {
+      height: 0.5rem;
+      width: 100%;
+      background-color: #2962ff;
+      transform: translateX(calc(-100% + var(--progress)));
+    }
+
+    .progress__value::after {
+      content: '';
+      position: absolute;
+      right: -0.25rem;
+      height: 0.5rem;
+      width: 0.5rem;
+      border-radius: 50%;
+      background-color: inherit;
+      transition: transform 0.2s ease;
+    }
+
+    .progress:hover .progress__value::after {
+      transform: scale(1.75);
     }
 
     .progress input {
-      margin: 0;
+      position: absolute;
+      top: 0;
       width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      z-index: 1;
     }
 
     .info {
@@ -103,7 +131,13 @@ export class AppMainNavigation extends LitElement {
   constructor() {
     super();
 
+    audio.volume = 0.25;
+    audio.muted = true;
     audio.src = this.track.path;
+    audio.addEventListener(
+      'durationchange',
+      () => ((audio.currentTime = 180), this.setProgressState()),
+    );
 
     audio.addEventListener('play', this.setPlayState, { passive: true });
     audio.addEventListener('pause', this.setPlayState, { passive: true });
@@ -112,17 +146,27 @@ export class AppMainNavigation extends LitElement {
     audio.addEventListener('volumechange', this.setMutedState, { passive: true });
     this.setMutedState();
 
-    audio.addEventListener('timeupdate', this.setProgressState, { passive: true });
     this.setProgressState();
 
     audio.addEventListener('volumechange', this.setVolumeState, { passive: true });
     this.setVolumeState();
   }
 
-  private setPlayState = () => (this.isPlaying = !audio.paused);
+  private setPlayState = () => {
+    this.isPlaying = !audio.paused;
+    if (this.isPlaying) this.updateProgressState();
+    else this.cancelUpdateProgressState();
+  };
   private setMutedState = () => (this.isMuted = audio.muted);
   private setProgressState = () => (this.progress = audio.currentTime);
   private setVolumeState = () => (this.volume = audio.volume);
+
+  private progressAnimationFrame = 0;
+  private updateProgressState = () => {
+    this.setProgressState();
+    this.progressAnimationFrame = requestAnimationFrame(this.updateProgressState);
+  };
+  private cancelUpdateProgressState = () => cancelAnimationFrame(this.progressAnimationFrame);
 
   @eventOptions({ passive: true })
   private playPause() {
@@ -138,6 +182,7 @@ export class AppMainNavigation extends LitElement {
   @eventOptions({ passive: true })
   private setProgress(event: Event) {
     audio.currentTime = +(<HTMLInputElement>event.target).value;
+    this.setProgressState();
   }
 
   @eventOptions({ passive: true })
@@ -146,7 +191,11 @@ export class AppMainNavigation extends LitElement {
   }
 
   render() {
-    return html`<div class="progress">
+    return html`<div
+        class="progress"
+        style="--progress: ${(this.progress / this.track.duration) * 100}%"
+      >
+        <div class="progress__value"></div>
         <input
           type="range"
           min="0"

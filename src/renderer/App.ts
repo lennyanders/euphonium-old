@@ -15,7 +15,7 @@ export class App extends LitElement {
       display: grid;
       grid-template: 'title title' auto 'nav content' 1fr 'player player' auto / auto 1fr;
       height: 100%;
-      overflow-y: hidden;
+      overflow: hidden;
     }
 
     app-title-bar {
