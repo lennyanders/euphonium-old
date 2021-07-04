@@ -76,9 +76,10 @@ export class AppMainNavigation extends LitElement {
       grid-area: options;
       display: flex;
       justify-content: flex-end;
+      align-items: center;
     }
 
-    .muted {
+    .audio {
       position: relative;
     }
 
@@ -92,6 +93,75 @@ export class AppMainNavigation extends LitElement {
       background-color: currentColor;
       box-shadow: 0 -0.125rem 0 0 #111;
       transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .volume {
+      --width: 0.5rem;
+      --height: 10rem;
+      position: absolute;
+      bottom: 100%;
+      margin-bottom: 1.5rem;
+      right: 50%;
+      margin-right: -0.75rem;
+      border-radius: 0.25rem;
+      width: var(--width);
+      height: var(--height);
+      padding: 0.75rem;
+      background-color: #111;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s 0.25s ease, visibility 0.2s 0.25s;
+    }
+
+    .audio:hover .volume {
+      transition: opacity 0.2s 0s ease, visibility 0.2s 0s;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .volume::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -0.5rem;
+      border-top: 0.5rem solid #111;
+      border-left: 0.5rem solid transparent;
+      border-right: 0.5rem solid transparent;
+    }
+
+    .volume input {
+      appearance: none;
+      display: block;
+      margin: 0;
+      width: var(--height);
+      height: var(--width);
+      margin-left: calc(var(--height) / -2 + var(--width) / 2);
+      margin-top: calc(var(--height) / 2 - var(--width) / 2);
+      transform: rotate(-0.25turn);
+      border-radius: calc(var(--width) / 2);
+      color: #2962ff;
+      background: linear-gradient(
+        to right,
+        currentColor var(--progress),
+        #333 0,
+        #333 calc(100% - var(--progress))
+      );
+    }
+
+    .volume input::-webkit-slider-thumb {
+      appearance: none;
+      display: block;
+      width: var(--width);
+      height: var(--width);
+      border-radius: 50%;
+      background-color: currentColor;
+      transition: transform 0.2s ease;
+      transform: scale(1.5);
+    }
+
+    .volume input:hover::-webkit-slider-thumb {
+      transform: scale(2);
     }
 
     button {
@@ -132,7 +202,7 @@ export class AppMainNavigation extends LitElement {
     super();
 
     audio.volume = 0.25;
-    audio.muted = true;
+    // audio.muted = true;
     audio.src = this.track.path;
     audio.addEventListener(
       'durationchange',
@@ -182,7 +252,7 @@ export class AppMainNavigation extends LitElement {
   @eventOptions({ passive: true })
   private setProgress(event: Event) {
     audio.currentTime = +(<HTMLInputElement>event.target).value;
-    this.setProgressState();
+    if (!this.isPlaying) this.setProgressState();
   }
 
   @eventOptions({ passive: true })
@@ -215,24 +285,27 @@ export class AppMainNavigation extends LitElement {
       </div>
       <div class="options">
         <span>${getFormattedTime(this.progress)}/${this.track.durationFormatted}</span>
-        <button @click="${this.muteUnmute}" class="${classMap({ muted: this.isMuted })}">
-          ${icon(
-            this.volume < 0.25
-              ? mdiVolumeLow
-              : this.volume > 0.75
-              ? mdiVolumeHigh
-              : mdiVolumeMedium,
-          )}
-        </button>
-        <input
-          type="range"
-          min="0"
-          value="${this.volume}"
-          max="1"
-          step="0.01"
-          ?disabled="${this.isMuted}"
-          @input="${this.setVolume}"
-        />
+        <div class="audio">
+          <button @click="${this.muteUnmute}" class="${classMap({ muted: this.isMuted })}">
+            ${icon(
+              this.volume < 0.25
+                ? mdiVolumeLow
+                : this.volume > 0.75
+                ? mdiVolumeHigh
+                : mdiVolumeMedium,
+            )}
+          </button>
+          <div class="volume" style="--progress: ${this.volume * 100}%">
+            <input
+              type="range"
+              min="0"
+              value="${this.volume}"
+              max="1"
+              step="0.01"
+              @input="${this.setVolume}"
+            />
+          </div>
+        </div>
       </div>`;
   }
 }
