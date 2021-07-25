@@ -1,54 +1,66 @@
-import { basename } from 'path';
+import { basename, extname } from 'path';
 import { totalist } from 'totalist';
 import { parseFile } from 'music-metadata';
+import { In, Not } from 'typeorm';
 import { settingsStore } from '../settings';
-import { database } from '../database';
-import type * as Tables from './Tables';
-import { table } from './utils/selector';
+import { getConnection } from '../database';
+import { Track } from './entity/track';
 
 export const buildData = async () => {
-  console.time('load files');
+  const trackRepository = (await getConnection()).getRepository(Track);
 
-  const clear = database.prepare(`DELETE FROM ${table('track')}`);
-  const insert = database.prepare<Omit<Tables.track, 'id'>>(
-    `INSERT INTO ${table(
-      'track',
-    )} (path, fileName, dateFileModified, duration, number, count, diskNumber, diskCount, year, artists, title, album, albumArtists) VALUES (@path, @fileName, @dateFileModified, @duration, @number, @count, @diskNumber, @diskCount, @year, @artists, @title, @album, @albumArtists)`,
-  );
-
-  const insertMany = database.transaction((tracks: Omit<Tables.track, 'id'>[]) => {
-    for (const track of tracks) insert.run(track);
-  });
-
-  const inserts: Omit<Tables.track, 'id'>[] = [];
+  console.time('get files and stats');
+  const fileInfos: { path: string; dateFileModified: number }[] = [];
   await Promise.all(
     settingsStore.store.libraryFolders.map((folder) => {
       return totalist(folder, async (_, path, stats) => {
-        if (!/\.aac$|\.mp3$|\.ogg$|\.wav$|\.flac$|\.m4a$/.test(path)) return;
-        const { format, common } = await parseFile(path, { duration: true });
-
-        inserts.push(<Omit<Tables.track, 'id'>>{
-          path,
-          fileName: basename(path),
-          dateFileModified: stats.mtimeMs,
-          duration: format.duration,
-          number: common.track.no,
-          count: common.track.of,
-          diskNumber: common.disk.no,
-          diskCount: common.disk.of,
-          year: common.year,
-          artists: common.artist,
-          title: common.title,
-          album: common.album,
-          albumArtists: common.albumartist,
-        });
+        if (/\.aac$|\.mp3$|\.ogg$|\.wav$|\.flac$|\.m4a$/.test(path)) {
+          fileInfos.push({ path, dateFileModified: stats.mtimeMs });
+        }
       });
     }),
   );
+  console.timeEnd('get files and stats');
 
-  clear.run();
-  insertMany(inserts);
+  console.time('remove not anymore existing tracks from db');
+  await trackRepository.delete({ path: Not(In(fileInfos.map(({ path }) => path))) });
+  console.timeEnd('remove not anymore existing tracks from db');
 
-  console.timeEnd('load files');
-  console.log(inserts.length);
+  console.time('get tracks that need updating');
+  const tracksInDb = await trackRepository.find({ select: ['path', 'dateFileModified'] });
+  const outdatedFileInfos = fileInfos.filter(({ path, dateFileModified }) => {
+    const trackInDb = tracksInDb.find((trackInDb) => trackInDb.path === path);
+    return !trackInDb || dateFileModified > trackInDb.dateFileModified;
+  });
+  console.timeEnd('get tracks that need updating');
+
+  if (!outdatedFileInfos.length) return;
+
+  console.time('get new track data');
+  const tracksToUpsert: Track[] = await Promise.all(
+    outdatedFileInfos.map(async ({ path, dateFileModified }) => {
+      const fileName = basename(path, extname(path));
+      const { format, common } = await parseFile(path, { duration: true });
+      return {
+        path,
+        fileName,
+        dateFileModified,
+        duration: format.duration!,
+        number: common.track.no ?? undefined,
+        count: common.track.of ?? undefined,
+        diskNumber: common.disk.no ?? undefined,
+        diskCount: common.disk.of ?? undefined,
+        year: common.year,
+        artists: common.artist,
+        title: common.title,
+        album: common.album,
+        albumArtists: common.albumartist,
+      };
+    }),
+  );
+  console.timeEnd('get new track data');
+
+  console.time('save tracks to db');
+  await trackRepository.save(tracksToUpsert, { chunk: 100 });
+  console.timeEnd('save tracks to db');
 };

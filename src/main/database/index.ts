@@ -1,22 +1,19 @@
 import { join } from 'path';
-import { readFileSync } from 'fs';
-import SqliteDatabase from 'better-sqlite3';
-import type * as Tables from './Tables';
+import { createConnection, Connection } from 'typeorm';
 import { userDataPath } from '../consts';
-import { table, sqlite_master } from './utils/selector';
+import { Track } from './entity/track';
 
-// @ts-ignore
-import sqlSetup from './setup.sql';
+let conn: Connection;
 
-const database = new SqliteDatabase(join(userDataPath, 'Euphonium.db'));
+export const getConnection = async () => {
+  if (!conn) {
+    conn = await createConnection({
+      type: 'better-sqlite3',
+      database: join(userDataPath, 'euphonium.db'),
+      entities: [Track],
+      synchronize: true,
+    });
+  }
 
-const statement = database.prepare(
-  `SELECT ${sqlite_master('name')} FROM ${table('sqlite_master')} WHERE ${sqlite_master(
-    'type',
-  )}='table' AND ${sqlite_master('name')}='track';`,
-);
-
-const info = <Pick<Tables.sqlite_master, 'name'>>statement.get();
-if (!info) database.exec(readFileSync(sqlSetup, { encoding: 'utf-8' }));
-
-export { database };
+  return conn;
+};

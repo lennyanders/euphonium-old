@@ -35,7 +35,7 @@ const sharedBuildOptions = {
     entryPoints: ['src/main/index.ts'],
     platform: 'node',
     format: 'cjs',
-    loader: { '.html': 'file', '.sql': 'file' },
+    loader: { '.html': 'file' },
     external: ['electron'],
     outfile: 'dist/main.cjs',
     watch: { onRebuild: () => app?.restart() },

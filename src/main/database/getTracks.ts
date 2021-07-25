@@ -1,24 +1,18 @@
-import { database } from '../database';
-import type * as Tables from './Tables';
-import { table, track } from './utils/selector';
+import { getConnection } from '../database';
 import { getFormattedTime } from '../../shared/utils';
+import { Track } from './entity/track';
 
-type DbTracks = Pick<Tables.track, 'path' | 'artists' | 'title' | 'duration'>;
+type _Track = Pick<Track, 'path' | 'artists' | 'title' | 'duration'>;
+export type RendererTrack = _Track & { durationFormatted: string };
 
-export interface TrackModel extends DbTracks {
-  durationFormatted: string;
-}
+export const getTracks = async () => {
+  const trackRepository = (await getConnection()).getRepository(Track);
+  const dbTracks: _Track[] = await trackRepository.find({
+    select: ['path', 'artists', 'title', 'duration'],
+  });
 
-export const getTracks = () => {
-  const statement = database.prepare(
-    `SELECT ${track('path')}, ${track('artists')}, ${track('title')}, ${track(
-      'duration',
-    )} FROM ${table('track')};`,
-  );
-
-  const dbTracks = <DbTracks[]>statement.all();
-
-  return dbTracks.map(
-    (track) => <TrackModel>{ ...track, durationFormatted: getFormattedTime(track.duration) },
-  );
+  return dbTracks.map<RendererTrack>((track) => ({
+    ...track,
+    durationFormatted: getFormattedTime(track.duration),
+  }));
 };

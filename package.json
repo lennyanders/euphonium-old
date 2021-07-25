@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/better-sqlite3": "^5.4.1",
     "electron-rebuild": "^2.3.5",
     "electronmon": "^2.0.1",
     "esbuild": "^0.12.5"
@@ -24,6 +23,7 @@
     "electron-store": "^8.0.0",
     "lit": "^2.0.0-rc.2",
     "music-metadata": "^7.8.7",
-    "totalist": "^2.0.0"
+    "totalist": "^2.0.0",
+    "typeorm": "^0.2.34"
   }
 }

@@ -76,9 +76,9 @@ const createWindow = () => {
   });
 
   ipcMain.on('rebuildAudioData', buildData);
-  ipcMain.on('getTracks', (event) => {
+  ipcMain.on('getTracks', async (event) => {
     // const send = () => event.sender.send('tracksChanged', getTracks());
-    event.returnValue = getTracks();
+    event.returnValue = await getTracks();
   });
 };
 
