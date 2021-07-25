@@ -11,7 +11,7 @@ import {
   mdiVolumeMedium,
 } from '@mdi/js';
 import { icon } from '../utils';
-import type { TrackModel } from '../../main/database/getTracks';
+import { RendererTrack } from '../../main/database/getTracks';
 import { getFormattedTime } from '../../shared/utils';
 
 const audio = new Audio();
@@ -178,8 +178,8 @@ export class AppMainNavigation extends LitElement {
   `;
 
   @state()
-  private track: TrackModel = {
-    path: "file://C:/Users/lenny/Music/i have on CD/Deadmau5/While (1[2)/Deadmau5 - Seeya (feat. Colleen D'Agostino).flac",
+  private track: RendererTrack = {
+    path: "file://C:/Users/lenny/Music/physical/Deadmau5/While (1[2)/Deadmau5 - Seeya (feat. Colleen D'Agostino).flac",
     artists: 'Deadmau5',
     title: "Seeya (feat. Colleen D'Agostino)",
     duration: 400,
