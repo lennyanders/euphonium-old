@@ -1,7 +1,7 @@
 // I work with esbuild so emitDecoratorMetadata does not work and I need to define every columns DB type
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity('track')
 export class Track {
   @PrimaryColumn('text')
   path: string;
