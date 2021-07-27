@@ -1,0 +1,28 @@
+.main-navigation {
+  overflow-y: auto;
+  margin: -2rem 0;
+  padding: 3rem 6rem 3rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: #111;
+}
+
+.main-navigation a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  font-size: 1.5rem;
+  color: hsl(0, 0%, 80%);
+  transition: color 0.1s ease;
+}
+
+.main-navigation a:hover {
+  color: hsl(0, 0%, 100%);
+}
+
+.main-navigation a svg {
+  width: 1em;
+  fill: currentColor;
+}

@@ -1,0 +1,18 @@
+.main {
+  grid-area: content;
+  overflow-y: auto;
+  margin: -2rem 0;
+  padding: 2.5rem 3rem;
+}
+
+.main::-webkit-scrollbar {
+  width: 0.75rem;
+}
+
+.main::-webkit-scrollbar-button {
+  height: 2rem;
+}
+
+.main::-webkit-scrollbar-thumb {
+  background-color: #333;
+}

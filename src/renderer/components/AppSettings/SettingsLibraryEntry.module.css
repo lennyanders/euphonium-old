@@ -1,0 +1,16 @@
+.folder {
+  display: flex;
+  align-items: center;
+}
+
+.folder button {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+
+.folder svg {
+  display: block;
+  width: 1.5rem;
+  fill: currentColor;
+}

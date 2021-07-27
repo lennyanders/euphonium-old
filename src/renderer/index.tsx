@@ -8,5 +8,8 @@ declare global {
   }
 }
 
+import { render } from 'preact';
+import { App } from './App';
 import './global.css';
-import './App';
+
+render(<App />, document.body);

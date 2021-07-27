@@ -1,8 +1,8 @@
 import { rm, mkdir, copyFile, access } from 'fs/promises';
-import { join } from 'path';
 import { execSync } from 'child_process';
 import { build } from 'esbuild';
 import { createServer } from 'vite';
+import preact from '@preact/preset-vite/dist/cjs/index.js'; // see https://github.com/preactjs/preset-vite/issues/11
 import electronmon from 'electronmon';
 
 /** @type {import('esbuild').BuildOptions} */
@@ -55,6 +55,8 @@ const sharedBuildOptions = {
   const server = await createServer({
     configFile: false,
     root: 'src/renderer',
+    css: { modules: { localsConvention: 'camelCase' } },
+    plugins: [preact.default()], // see https://github.com/preactjs/preset-vite/issues/11
   });
   await server.listen(9090);
 

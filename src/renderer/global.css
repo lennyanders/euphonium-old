@@ -9,4 +9,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.5;
   cursor: default;
+  display: grid;
+  grid-template: 'title title' auto 'nav content' 1fr 'player player' auto / auto 1fr;
+  overflow: hidden;
 }

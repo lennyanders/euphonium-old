@@ -1,0 +1,36 @@
+.titlebar {
+  grid-area: title;
+  z-index: 1;
+  -webkit-app-region: drag;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.window-actions {
+  -webkit-app-region: no-drag;
+  display: flex;
+}
+
+.window-action {
+  background-color: transparent;
+  border: 0;
+  padding: 8px 17px;
+}
+
+.window-action:hover {
+  background-color: hsla(0, 0%, 100%, 0.22);
+}
+
+.window-action.window-action-close:hover {
+  background-color: hsl(355, 86%, 49%);
+}
+
+.window-action svg {
+  display: block;
+  fill: none;
+  width: 0.75rem;
+}
+
+.window-action [stroke-width] {
+  stroke: currentColor;
+}
