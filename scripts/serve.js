@@ -1,6 +1,8 @@
 import { rm, mkdir, copyFile, access } from 'fs/promises';
+import { join } from 'path';
 import { execSync } from 'child_process';
 import { build } from 'esbuild';
+import { createServer } from 'vite';
 import electronmon from 'electronmon';
 
 /** @type {import('esbuild').BuildOptions} */
@@ -35,7 +37,6 @@ const sharedBuildOptions = {
     entryPoints: ['src/main/index.ts'],
     platform: 'node',
     format: 'cjs',
-    loader: { '.html': 'file' },
     external: ['electron'],
     outfile: 'dist/main.cjs',
     watch: { onRebuild: () => app?.restart() },
@@ -51,14 +52,11 @@ const sharedBuildOptions = {
     watch: { onRebuild: () => app?.reload() },
   });
 
-  await build({
-    ...sharedBuildOptions,
-    entryPoints: ['src/renderer/index.ts'],
-    format: 'esm',
-    loader: { '.html': 'file' },
-    outfile: 'dist/renderer.js',
-    watch: { onRebuild: () => app?.reload() },
+  const server = await createServer({
+    configFile: false,
+    root: 'src/renderer',
   });
+  await server.listen(9090);
 
   const app = await electronmon({
     cwd: 'dist',

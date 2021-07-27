@@ -1,11 +1,10 @@
 import { join } from 'path';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
+import { isDev } from './consts';
 import { Settings, settingsStore } from './settings';
 import { buildData } from './database/buildData';
 import { getTracks } from './database/getTracks';
-// @ts-ignore
-import indexHtml from '../renderer/index.html';
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -17,12 +16,16 @@ const createWindow = () => {
       preload: join(__dirname, 'preload.js'),
       sandbox: true,
       contextIsolation: true,
+      webSecurity: !isDev, // to play local audio files
     },
   });
 
-  win.loadFile(indexHtml, { hash: 'songs' });
-
-  win.webContents.openDevTools({ mode: 'detach' });
+  if (isDev) {
+    win.loadURL('http://localhost:9090/index.html#songs');
+    win.webContents.openDevTools({ mode: 'detach' });
+  } else {
+    win.loadFile('http://localhost:9090/index.html', { hash: 'songs' });
+  }
 
   win.once('ready-to-show', () => win.show());
 

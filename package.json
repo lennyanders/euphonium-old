@@ -14,7 +14,8 @@
   "devDependencies": {
     "electron-rebuild": "^2.3.5",
     "electronmon": "^2.0.1",
-    "esbuild": "^0.12.5"
+    "esbuild": "^0.12.5",
+    "vite": "^2.4.4"
   },
   "dependencies": {
     "@lit-labs/virtualizer": "^0.6.0",
