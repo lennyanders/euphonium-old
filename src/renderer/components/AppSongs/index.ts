@@ -1,8 +1,14 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import { repeat } from 'lit/directives/repeat';
+import { LitElement, html, css, TemplateResult } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import '@lit-labs/virtualizer';
+import { Layout1d } from '@lit-labs/virtualizer';
+import { Ref } from 'lit/directives/ref';
+import { RendererTrack } from '../../../main/database/getTracks';
 
 import './SongEntry';
+
+const renderTrack = (track: RendererTrack) =>
+  html`<li><song-entry .track="${track}"></song-entry></li>` as TemplateResult;
 
 @customElement('app-songs')
 export class App extends LitElement {
@@ -16,6 +22,9 @@ export class App extends LitElement {
     }
   `;
 
+  @property({ attribute: false })
+  scrollElement: Ref<HTMLElement>;
+
   @state()
   tracks = window.audioData.getTracks((tracks) => (this.tracks = tracks));
 
@@ -23,11 +32,13 @@ export class App extends LitElement {
     return html`<h1>Songs (${this.tracks.length})</h1>
       ${this.tracks.length
         ? html`<ul>
-            ${repeat(
-              this.tracks,
-              (track) => track.path,
-              (track) => html`<li><song-entry .track="${track}"></song-entry></li>`,
-            )}
+            <lit-virtualizer
+              .items="${this.tracks}"
+              .renderItem="${renderTrack}"
+              .layout="${Layout1d}"
+              .scrollTarget="${this.scrollElement.value}"
+              .keyFunction="${(track: RendererTrack) => track.path}"
+            ></lit-virtualizer>
           </ul>`
         : html`<p>Start adding sources and listening to music!</p>`} `;
   }

@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { ref, createRef } from 'lit/directives/ref';
 
 import { router } from './router';
 import './components/AppTitleBar';
@@ -61,18 +62,23 @@ export class App extends LitElement {
   @state()
   private page = html`1`;
 
+  mainRef = createRef<HTMLElement>();
+
   constructor() {
     super();
 
     router.on('settings', () => (this.page = html`<app-settings></app-settings>`));
-    router.on('songs', () => (this.page = html`<app-songs></app-songs>`));
+    router.on(
+      'songs',
+      () => (this.page = html`<app-songs .scrollElement="${this.mainRef}"></app-songs>`),
+    );
     router.on('*', () => (this.page = html`404`));
   }
 
   render() {
     return html`<app-title-bar></app-title-bar>
       <app-main-navigation></app-main-navigation>
-      <main>${this.page}</main>
+      <main ${ref(this.mainRef)}>${this.page}</main>
       <app-player></app-player>`;
   }
 }
