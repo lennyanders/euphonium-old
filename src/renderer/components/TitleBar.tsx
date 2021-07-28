@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
-import classes from './AppTitleBar.module.css';
+import classes from './TitleBar.module.css';
 
-export const AppTitleBar = () => {
+export const TitleBar = () => {
   const [isMaximized, setIsMaximized] = useState(
     window.windowActions.getMaximizedState((isMaximized) => setIsMaximized(isMaximized)),
   );

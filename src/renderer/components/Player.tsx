@@ -8,14 +8,14 @@ import {
   mdiVolumeLow,
   mdiVolumeMedium,
 } from '@mdi/js';
-import { icon } from '../utils';
+import { Icon } from './icon';
 import { RendererTrack } from '../../main/database/getTracks';
 import { getFormattedTime } from '../../shared/utils';
-import classes from './AppPlayer.module.css';
+import classes from './Player.module.css';
 
 const audio = new Audio();
 
-export const AppPlayer = () => {
+export const Player = () => {
   const track: RendererTrack = {
     path: "file://C:/Users/lenny/Music/physical/Deadmau5/While (1[2)/Deadmau5 - Seeya (feat. Colleen D'Agostino).flac",
     artists: 'Deadmau5',
@@ -97,9 +97,15 @@ export const AppPlayer = () => {
         <span>{track.artists}</span>
       </div>
       <div class={classes.controls}>
-        <button>{icon(mdiSkipPrevious)}</button>
-        <button onClick={playPause}>{icon(isPlaying ? mdiPause : mdiPlay)}</button>
-        <button>{icon(mdiSkipNext)}</button>
+        <button>
+          <Icon path={mdiSkipPrevious} />
+        </button>
+        <button onClick={playPause}>
+          <Icon path={isPlaying ? mdiPause : mdiPlay} />
+        </button>
+        <button>
+          <Icon path={mdiSkipNext} />
+        </button>
       </div>
       <div class={classes.options}>
         <span>
@@ -107,7 +113,9 @@ export const AppPlayer = () => {
         </span>
         <div class={classes.audio}>
           <button onClick={muteUnmute} class={isMuted ? classes.muted : ''}>
-            {icon(volume < 0.25 ? mdiVolumeLow : volume > 0.75 ? mdiVolumeHigh : mdiVolumeMedium)}
+            <Icon
+              path={volume < 0.25 ? mdiVolumeLow : volume > 0.75 ? mdiVolumeHigh : mdiVolumeMedium}
+            />
           </button>
           <div class={classes.volume} style={`--progress: ${volume * 100}%`}>
             <input type="range" min="0" value={volume} max="1" step="0.01" onInput={setVolumeUI} />

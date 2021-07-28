@@ -1,10 +1,10 @@
 import { useState } from 'preact/hooks';
-import { VirtualScroller } from './VirtualScroller';
-import { SongEntry } from './SongEntry';
-import { RendererTrack } from '../../../main/database/getTracks';
-import classes from './index.module.css';
+import { VirtualScroller } from '../components/songs/VirtualScroller';
+import { SongEntry } from '../components/songs/SongEntry';
+import { RendererTrack } from '../../main/database/getTracks';
+import classes from './Songs.module.css';
 
-export const AppSongs = () => {
+export const Songs = () => {
   const [tracks, setTracks] = useState(window.audioData.getTracks((tracks) => setTracks(tracks)));
 
   return (

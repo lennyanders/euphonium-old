@@ -150,9 +150,3 @@
   padding: 1rem;
   border: 0;
 }
-
-.player svg {
-  display: block;
-  fill: currentColor;
-  width: 1.5rem;
-}

@@ -1,10 +1,10 @@
 import { useState } from 'preact/hooks';
 import { mdiReload } from '@mdi/js';
-import { icon } from '../../utils';
-import { SettingsLibraryEntry } from './SettingsLibraryEntry';
-import classes from './index.module.css';
+import { Icon } from '../components/icon';
+import { SettingsLibraryEntry } from '../components/settings/SettingsLibraryEntry';
+import classes from './Settings.module.css';
 
-export const AppSettings = () => {
+export const Settings = () => {
   const [settings, setSettings] = useState(
     window.settings.getSettings((settings) => setSettings(settings)),
   );
@@ -14,8 +14,8 @@ export const AppSettings = () => {
       <h1 class={classes.h1}>Settings</h1>
       <h2>Audio Sources</h2>
       <button onClick={window.settings.addFolderToLibrary}>Add</button>
-      <button onClick={window.audioData.rebuild} class={classes.icon}>
-        {icon(mdiReload)}
+      <button onClick={window.audioData.rebuild}>
+        <Icon path={mdiReload} />
       </button>
       {settings.libraryFolders.length ? (
         <ul class={classes.list}>

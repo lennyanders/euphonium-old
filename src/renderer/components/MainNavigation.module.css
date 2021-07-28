@@ -21,8 +21,3 @@
 .main-navigation a:hover {
   color: hsl(0, 0%, 100%);
 }
-
-.main-navigation a svg {
-  width: 1em;
-  fill: currentColor;
-}

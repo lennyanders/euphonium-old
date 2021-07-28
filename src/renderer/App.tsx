@@ -1,24 +1,21 @@
+import { JSX } from 'preact';
 import { useState } from 'preact/hooks';
 
 import { router } from './router';
+import { TitleBar } from './components/TitleBar';
+import { MainNavigation } from './components/MainNavigation';
+import { Player } from './components/Player';
 import classes from './App.module.css';
-import { AppTitleBar } from './components/AppTitleBar';
-import { AppMainNavigation } from './components/AppMainNavigation';
-import { AppPlayer } from './components/AppPlayer';
 
-import { AppSettings } from './components/AppSettings';
-import { AppSongs } from './components/AppSongs';
+import { Settings } from './pages/Settings';
+import { Songs } from './pages/Songs';
 
-const Page = ({ route }: { route: string }) => {
-  switch (route) {
-    case 'settings':
-      return <AppSettings />;
-    case 'songs':
-      return <AppSongs />;
-    default:
-      return <>404</>;
-  }
+const routes: Record<string, JSX.Element> = {
+  settings: <Settings />,
+  songs: <Songs />,
 };
+
+const Page = ({ route }: { route: string }) => routes[route] || <>404</>;
 
 export const App = () => {
   const [currentRoute, setCurrentRoute] = useState('');
@@ -26,12 +23,12 @@ export const App = () => {
 
   return (
     <>
-      <AppTitleBar />
-      <AppMainNavigation />
+      <TitleBar />
+      <MainNavigation />
       <main class={classes.main}>
         <Page route={currentRoute} />
       </main>
-      <AppPlayer />
+      <Player />
     </>
   );
 };

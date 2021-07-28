@@ -6,9 +6,3 @@
   padding-left: 0;
   list-style: none;
 }
-
-.icon svg {
-  display: block;
-  width: 1.5rem;
-  fill: currentColor;
-}
