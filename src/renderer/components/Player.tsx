@@ -13,6 +13,7 @@ import { RendererTrack } from '../../main/database/getTracks';
 import { getFormattedTime } from '../../shared/utils';
 import classes from './Player.module.css';
 
+const EVENT_OPTS = { passive: true, capture: true };
 const audio = new Audio();
 
 export const Player = () => {
@@ -24,46 +25,38 @@ export const Player = () => {
     durationFormatted: '6:40',
   };
 
-  const [isPlaying, setIsPlaying] = useState(() => !audio.paused);
-  const [isMuted, setIsMuted] = useState(() => audio.muted);
-  const [progress, setProgress] = useState(() => audio.currentTime);
-  const [volume, setVolume] = useState(() => audio.volume);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [volume, setVolume] = useState(0);
 
-  const setPlayState = () => {
+  const updateIsMuted = () => setIsMuted(audio.muted);
+  const updateProgress = () => setProgress(audio.currentTime);
+  const updateVolume = () => setVolume(audio.volume);
+
+  let progressAnimationFrame = 0;
+  const updateIsPlaying = () => {
     const newIsPlaying = !audio.paused;
     setIsPlaying(newIsPlaying);
 
     if (newIsPlaying) updateProgressState();
-    else cancelUpdateProgressState();
+    else cancelAnimationFrame(progressAnimationFrame);
   };
-  const setMutedState = () => setIsMuted(audio.muted);
-  const setProgressState = () => setProgress(audio.currentTime);
-  const setVolumeState = () => setVolume(audio.volume);
-
-  let progressAnimationFrame = 0;
   const updateProgressState = () => {
-    setProgressState();
+    updateProgress();
     progressAnimationFrame = requestAnimationFrame(updateProgressState);
   };
-  const cancelUpdateProgressState = () => cancelAnimationFrame(progressAnimationFrame);
 
   const playPause = () => {
     if (isPlaying) audio.pause();
     else audio.play();
   };
-
-  const muteUnmute = () => {
-    audio.muted = !audio.muted;
-  };
-
+  const muteUnmute = () => (audio.muted = !audio.muted);
   const setProgressUI = (event: Event) => {
     audio.currentTime = +(event.target as HTMLInputElement).value;
-    if (!isPlaying) setProgressState();
+    if (!isPlaying) updateProgress();
   };
-
-  const setVolumeUI = (event: Event) => {
-    audio.volume = +(event.target as HTMLInputElement).value;
-  };
+  const setVolumeUI = (event: Event) => (audio.volume = +(event.target as HTMLInputElement).value);
 
   useEffect(() => {
     audio.volume = 0.25;
@@ -71,19 +64,25 @@ export const Player = () => {
     audio.src = track.path;
     audio.currentTime = 180;
 
-    audio.addEventListener('durationchange', () => setProgressState());
+    audio.addEventListener('durationchange', updateProgress, EVENT_OPTS);
+    updateProgress();
 
-    audio.addEventListener('play', setPlayState, { passive: true });
-    audio.addEventListener('pause', setPlayState, { passive: true });
-    setPlayState();
+    audio.addEventListener('play', updateIsPlaying, EVENT_OPTS);
+    audio.addEventListener('pause', updateIsPlaying, EVENT_OPTS);
+    updateIsPlaying();
 
-    audio.addEventListener('volumechange', setMutedState, { passive: true });
-    setMutedState();
+    audio.addEventListener('volumechange', updateIsMuted, EVENT_OPTS);
+    audio.addEventListener('volumechange', updateVolume, EVENT_OPTS);
+    updateIsMuted();
+    updateVolume();
 
-    setProgressState();
-
-    audio.addEventListener('volumechange', setVolumeState, { passive: true });
-    setVolumeState();
+    return () => {
+      audio.removeEventListener('durationchange', updateProgress, EVENT_OPTS);
+      audio.removeEventListener('play', updateIsPlaying, EVENT_OPTS);
+      audio.removeEventListener('pause', updateIsPlaying, EVENT_OPTS);
+      audio.removeEventListener('volumechange', updateIsMuted, EVENT_OPTS);
+      audio.removeEventListener('volumechange', updateVolume, EVENT_OPTS);
+    };
   }, []);
 
   return (
