@@ -104,8 +104,8 @@ export const Player = () => {
         <div class={classes.progressValue}></div>
         <input
           class={classes.progressInput}
-          type="range"
-          min="0"
+          type='range'
+          min='0'
           value={progress}
           max={track.duration}
           onInput={setProgressUI}
@@ -133,11 +133,11 @@ export const Player = () => {
           <div class={classes.volume} style={{ '--progress': `${volume * 100}%` }}>
             <input
               class={classes.volumeInput}
-              type="range"
-              min="0"
+              type='range'
+              min='0'
               value={volume}
-              max="1"
-              step="0.01"
+              max='1'
+              step='0.01'
               onInput={setVolumeUI}
             />
           </div>

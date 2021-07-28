@@ -11,27 +11,27 @@ import classes from './MainNavigation.module.css';
 
 export const MainNavigation = () => (
   <nav class={classes.mainNavigation}>
-    <a href="#artists">
+    <a href='#artists'>
       <Icon path={mdiAccountMusic} />
       Artists
     </a>
-    <a href="#albums">
+    <a href='#albums'>
       <Icon path={mdiAlbum} />
       Albums
     </a>
-    <a href="#songs">
+    <a href='#songs'>
       <Icon path={mdiMusicNote} />
       Songs
     </a>
-    <a href="#playlists">
+    <a href='#playlists'>
       <Icon path={mdiPlaylistMusic} />
       Playlists
     </a>
-    <a href="#folders">
+    <a href='#folders'>
       <Icon path={mdiFolderMusic} />
       Folders
     </a>
-    <a href="#settings">
+    <a href='#settings'>
       <Icon path={mdiCog} />
       Settings
     </a>
