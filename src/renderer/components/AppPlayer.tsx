@@ -24,10 +24,10 @@ export const AppPlayer = () => {
     durationFormatted: '6:40',
   };
 
-  const [isPlaying, setIsPlaying] = useState(!audio.paused);
-  const [isMuted, setIsMuted] = useState(audio.muted);
-  const [progress, setProgress] = useState(audio.currentTime);
-  const [volume, setVolume] = useState(audio.volume);
+  const [isPlaying, setIsPlaying] = useState(() => !audio.paused);
+  const [isMuted, setIsMuted] = useState(() => audio.muted);
+  const [progress, setProgress] = useState(() => audio.currentTime);
+  const [volume, setVolume] = useState(() => audio.volume);
 
   const setPlayState = () => {
     const newIsPlaying = !audio.paused;

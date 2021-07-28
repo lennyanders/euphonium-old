@@ -40,14 +40,6 @@ const createWindow = () => {
     win.on('unmaximize', send);
     win.on('restore', send);
     event.returnValue = win.isMaximized();
-
-    // stop sending/listening to events when ui gets reloaded (mainly for development)
-    win.webContents.once('did-start-loading', () => {
-      win.off('maximize', send);
-      win.off('minimize', send);
-      win.off('unmaximize', send);
-      win.off('restore', send);
-    });
   });
 
   ipcMain.on('addFolderToLibrary', async () => {
@@ -66,16 +58,13 @@ const createWindow = () => {
   });
 
   ipcMain.on('getSettings', (event) => {
-    const unsubscribers = Object.keys(settingsStore.store).map((key) => {
+    Object.keys(settingsStore.store).map((key) => {
       return settingsStore.onDidChange(<keyof Settings>key, (newValue) => {
         event.sender.send('settingsChanged', <Partial<Settings>>{ [key]: newValue });
       });
     });
 
     event.returnValue = settingsStore.store;
-
-    // stop sending/listening to events when ui gets reloaded (mainly for development)
-    win.webContents.once('did-start-loading', () => unsubscribers.forEach((u) => u()));
   });
 
   ipcMain.on('rebuildAudioData', buildData);

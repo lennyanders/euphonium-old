@@ -6,9 +6,7 @@ import classes from './index.module.css';
 
 export const AppSettings = () => {
   const [settings, setSettings] = useState(
-    window.settings.getSettings((settingsChanges) => {
-      setSettings({ ...settings, ...settingsChanges });
-    }),
+    window.settings.getSettings((settings) => setSettings(settings)),
   );
 
   return (
