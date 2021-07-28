@@ -1,4 +1,4 @@
-.main-navigation {
+.root {
   overflow-y: auto;
   margin: -2rem 0;
   padding: 3rem 6rem 3rem 3rem;
@@ -8,7 +8,7 @@
   background-color: #111;
 }
 
-.main-navigation a {
+.link {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -18,6 +18,6 @@
   transition: color 0.1s ease;
 }
 
-.main-navigation a:hover {
+.link:hover {
   color: hsl(0, 0%, 100%);
 }
