@@ -6,6 +6,12 @@
   background-color: #111;
 }
 
+.button {
+  background: transparent;
+  padding: 1rem;
+  border: 0;
+}
+
 .progress {
   grid-area: progress;
   position: relative;
@@ -33,7 +39,7 @@
   transform: scale(1.75);
 }
 
-.progress input {
+.progress-input {
   position: absolute;
   top: 0;
   width: 100%;
@@ -111,7 +117,7 @@
   border-right: 0.5rem solid transparent;
 }
 
-.volume input {
+.volume-input {
   appearance: none;
   display: block;
   margin: 0;
@@ -130,7 +136,7 @@
   );
 }
 
-.volume input::-webkit-slider-thumb {
+.volume-input::-webkit-slider-thumb {
   appearance: none;
   display: block;
   width: var(--width);
@@ -141,12 +147,6 @@
   transform: scale(1.5);
 }
 
-.volume input:hover::-webkit-slider-thumb {
+.volume-input:hover::-webkit-slider-thumb {
   transform: scale(2);
-}
-
-.player button {
-  background: transparent;
-  padding: 1rem;
-  border: 0;
 }

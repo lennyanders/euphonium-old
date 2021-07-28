@@ -11,10 +11,20 @@ import {
 import { Icon } from './icon';
 import { RendererTrack } from '../../main/database/getTracks';
 import { getFormattedTime } from '../../shared/utils';
+import type { Props } from '../utils';
 import classes from './Player.module.css';
 
 const EVENT_OPTS = { passive: true, capture: true };
 const audio = new Audio();
+
+const Button = ({ path, ...props }: Props<HTMLButtonElement, { path: string; class?: string }>) => {
+  props.class = `${props.class ? `${props.class} ` : ''}${classes.button}`;
+  return (
+    <button {...props}>
+      <Icon path={path} />
+    </button>
+  );
+};
 
 export const Player = () => {
   const track: RendererTrack = {
@@ -60,7 +70,7 @@ export const Player = () => {
 
   useEffect(() => {
     audio.volume = 0.25;
-    // audio.muted = true;
+    audio.muted = true;
     audio.src = track.path;
     audio.currentTime = 180;
 
@@ -87,37 +97,49 @@ export const Player = () => {
 
   return (
     <div class={classes.player}>
-      <div class={classes.progress} style={`--progress: ${(progress / track.duration) * 100}%`}>
+      <div
+        class={classes.progress}
+        style={{ '--progress': `${(progress / track.duration) * 100}%` }}
+      >
         <div class={classes.progressValue}></div>
-        <input type="range" min="0" value={progress} max={track.duration} onInput={setProgressUI} />
+        <input
+          class={classes.progressInput}
+          type="range"
+          min="0"
+          value={progress}
+          max={track.duration}
+          onInput={setProgressUI}
+        />
       </div>
       <div class={classes.info}>
         <span>{track.title}</span>
         <span>{track.artists}</span>
       </div>
       <div class={classes.controls}>
-        <button>
-          <Icon path={mdiSkipPrevious} />
-        </button>
-        <button onClick={playPause}>
-          <Icon path={isPlaying ? mdiPause : mdiPlay} />
-        </button>
-        <button>
-          <Icon path={mdiSkipNext} />
-        </button>
+        <Button path={mdiSkipPrevious} />
+        <Button onClick={playPause} path={isPlaying ? mdiPause : mdiPlay} />
+        <Button path={mdiSkipNext} />
       </div>
       <div class={classes.options}>
         <span>
           {getFormattedTime(progress)}/{track.durationFormatted}
         </span>
         <div class={classes.audio}>
-          <button onClick={muteUnmute} class={isMuted ? classes.muted : ''}>
-            <Icon
-              path={volume < 0.25 ? mdiVolumeLow : volume > 0.75 ? mdiVolumeHigh : mdiVolumeMedium}
+          <Button
+            class={isMuted ? classes.muted : ''}
+            onClick={muteUnmute}
+            path={volume < 0.25 ? mdiVolumeLow : volume > 0.75 ? mdiVolumeHigh : mdiVolumeMedium}
+          />
+          <div class={classes.volume} style={{ '--progress': `${volume * 100}%` }}>
+            <input
+              class={classes.volumeInput}
+              type="range"
+              min="0"
+              value={volume}
+              max="1"
+              step="0.01"
+              onInput={setVolumeUI}
             />
-          </button>
-          <div class={classes.volume} style={`--progress: ${volume * 100}%`}>
-            <input type="range" min="0" value={volume} max="1" step="0.01" onInput={setVolumeUI} />
           </div>
         </div>
       </div>
