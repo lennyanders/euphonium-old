@@ -25,7 +25,6 @@
     "electron-store": "^8.0.0",
     "music-metadata": "^7.8.7",
     "preact": "^10.5.14",
-    "preact-scroll-viewport": "^0.2.0",
     "totalist": "^2.0.0",
     "typeorm": "^0.2.34"
   }
