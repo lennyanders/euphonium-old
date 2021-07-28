@@ -25,12 +25,10 @@
   background-color: hsl(355, 86%, 49%);
 }
 
-.window-action svg {
+.icon {
   display: block;
   fill: none;
   width: 0.75rem;
-}
-
-.window-action [stroke-width] {
+  stroke-width: 0.9;
   stroke: currentColor;
 }
