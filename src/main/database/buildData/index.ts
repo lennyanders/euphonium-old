@@ -41,35 +41,38 @@ export const buildData = async () => {
   if (!outdatedFileInfos.length) return;
 
   console.time('get new track data');
-  const albumsToUpsert: Album[] = [];
-  const tracksToUpsert: Track[] = await Promise.all(
-    outdatedFileInfos.map(async ({ path, dateFileModified }) => {
-      const track = await getTrack(path, dateFileModified);
-      if (!track.albumTitle || !track.albumArtists) return track;
-
-      let album = albumsToUpsert.find(
-        (album) => album.artists === track.albumArtists && album.title === track.albumTitle,
-      );
-      if (!album) {
-        album = { artists: track.albumArtists, title: track.albumTitle };
-        albumsToUpsert.push(album);
-        // add cover late so the first album adding is synchronous'ly
-        try {
-          const coverPath = join(dirname(path), 'cover.jpg');
-          const { mtimeMs } = await stat(coverPath);
-          album.coverPath = coverPath;
-          album.coverDateFileModified = mtimeMs;
-        } catch (_) {}
-      }
-
-      track.album = album;
-      return track;
-    }),
-  );
+  const tracksToUpsert: Track[] = await Promise.all(outdatedFileInfos.map(getTrack));
   console.timeEnd('get new track data');
 
-  console.time('save tracks to db');
+  const findAlbum = (albums: Album[], track: Track) => {
+    if (!albums.length) return;
+    return albums.find(
+      (album) => album.artists === track.albumArtists && album.title === track.albumTitle,
+    );
+  };
+
+  console.time('get new album data');
+  const albumsToUpsert: Album[] = [];
+  const albumsInDb = await albumRepository.find();
+  for (const track of tracksToUpsert) {
+    if (!track.albumTitle || !track.albumArtists) continue;
+
+    let album = findAlbum(albumsToUpsert, track) || findAlbum(albumsInDb, track);
+    if (!album) {
+      album = { artists: track.albumArtists, title: track.albumTitle };
+      try {
+        const coverPath = join(dirname(track.path), 'cover.jpg');
+        const { mtimeMs } = await stat(coverPath);
+        album.coverPath = coverPath;
+        album.coverDateFileModified = mtimeMs;
+      } catch (_) {}
+      albumsToUpsert.push(album);
+    }
+  }
+  console.timeEnd('get new album data');
+
+  console.time('save tracks and albums to db');
   await albumRepository.save(albumsToUpsert, { chunk: 100 });
   await trackRepository.save(tracksToUpsert, { chunk: 100 });
-  console.timeEnd('save tracks to db');
+  console.timeEnd('save tracks and albums to db');
 };

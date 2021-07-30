@@ -2,7 +2,13 @@ import { basename, extname } from 'path';
 import { parseFile } from 'music-metadata';
 import { Track } from '../entity/track';
 
-export const getTrack = async (path: string, dateFileModified: number) => {
+export const getTrack = async ({
+  path,
+  dateFileModified,
+}: {
+  path: string;
+  dateFileModified: number;
+}) => {
   const { format, common } = await parseFile(path, { duration: true });
   return <Track>{
     path,
