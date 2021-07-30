@@ -1,5 +1,6 @@
-// I work with esbuild so emitDecoratorMetadata does not work and I need to define every columns DB type
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+// I work with esbuild/vite so emitDecoratorMetadata does not work and I need to define every columns DB type
+import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Album } from './album';
 
 @Entity('track')
 export class Track {
@@ -37,8 +38,11 @@ export class Track {
   title?: string;
 
   @Column('text', { nullable: true })
-  album?: string;
+  albumArtists?: string;
 
   @Column('text', { nullable: true })
-  albumArtists?: string;
+  albumTitle?: string;
+
+  @ManyToOne(() => Album, (album) => album.artists && album.title)
+  album?: Album;
 }

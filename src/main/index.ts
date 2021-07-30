@@ -5,6 +5,7 @@ import { isDev } from './consts';
 import { Settings, settingsStore } from './settings';
 import { buildData } from './database/buildData';
 import { getTracks } from './database/getTracks';
+import { getAlbums } from './database/getAlbums';
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -71,6 +72,9 @@ const createWindow = () => {
   ipcMain.on('getTracks', async (event) => {
     // const send = () => event.sender.send('tracksChanged', getTracks());
     event.returnValue = await getTracks();
+  });
+  ipcMain.on('getAlbums', async (event) => {
+    event.returnValue = await getAlbums();
   });
 };
 

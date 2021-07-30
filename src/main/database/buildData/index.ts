@@ -2,12 +2,15 @@ import { basename, extname } from 'path';
 import { totalist } from 'totalist';
 import { parseFile } from 'music-metadata';
 import { In, Not } from 'typeorm';
-import { settingsStore } from '../settings';
-import { getConnection } from '../database';
-import { Track } from './entity/track';
+import { settingsStore } from '../../settings';
+import { getConnection } from '..';
+import { Track } from '../entity/track';
+import { Album } from '../entity/album';
 
 export const buildData = async () => {
-  const trackRepository = (await getConnection()).getRepository(Track);
+  const connection = await getConnection();
+  const trackRepository = connection.getRepository(Track);
+  const albumRepository = connection.getRepository(Album);
 
   console.time('get files and stats');
   const fileInfos: { path: string; dateFileModified: number }[] = [];
@@ -37,11 +40,12 @@ export const buildData = async () => {
   if (!outdatedFileInfos.length) return;
 
   console.time('get new track data');
+  const albumsToUpsert: Album[] = [];
   const tracksToUpsert: Track[] = await Promise.all(
     outdatedFileInfos.map(async ({ path, dateFileModified }) => {
       const fileName = basename(path, extname(path));
       const { format, common } = await parseFile(path, { duration: true });
-      return {
+      const track: Track = {
         path,
         fileName,
         dateFileModified,
@@ -53,14 +57,28 @@ export const buildData = async () => {
         year: common.year,
         artists: common.artist,
         title: common.title,
-        album: common.album,
         albumArtists: common.albumartist,
+        albumTitle: common.album,
       };
+
+      if (!track.albumTitle || !track.albumArtists) return track;
+
+      let album = albumsToUpsert.find(
+        (album) => album.artists === track.albumArtists && album.title === track.albumTitle,
+      );
+      if (!album) {
+        album = { artists: track.albumArtists, title: track.albumTitle };
+        albumsToUpsert.push(album);
+      }
+
+      track.album = album;
+      return track;
     }),
   );
   console.timeEnd('get new track data');
 
   console.time('save tracks to db');
+  await albumRepository.save(albumsToUpsert, { chunk: 100 });
   await trackRepository.save(tracksToUpsert, { chunk: 100 });
   console.timeEnd('save tracks to db');
 };

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { RendererTrack } from '../main/database/getTracks';
+import { Album } from '../main/database/entity/album';
 import type { Settings as AppSettings } from '../main/settings';
 import { get } from './utils';
 
@@ -24,6 +25,7 @@ contextBridge.exposeInMainWorld('settings', settings);
 const audioData = {
   rebuild: () => ipcRenderer.send('rebuildAudioData'),
   getTracks: get<RendererTrack[]>('getTracks', 'tracksChanged'),
+  getAlbums: get<Album[]>('getAlbums', 'albumsChanged'),
 };
 export type AudioData = typeof audioData;
 contextBridge.exposeInMainWorld('audioData', audioData);
