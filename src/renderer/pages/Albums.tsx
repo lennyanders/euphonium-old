@@ -13,8 +13,10 @@ export const Albums = () => {
         <ul>
           {albums.map((album) => (
             <li>
+              {album.coverPath && (
+                <img src={'file:///' + album.coverPath} loading='lazy' width='200' />
+              )}
               {album.title} by {album.artists}
-              <br />
             </li>
           ))}
         </ul>

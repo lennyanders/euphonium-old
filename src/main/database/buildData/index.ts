@@ -1,11 +1,12 @@
-import { basename, extname } from 'path';
+import { stat } from 'fs/promises';
+import { join, dirname } from 'path';
 import { totalist } from 'totalist';
-import { parseFile } from 'music-metadata';
 import { In, Not } from 'typeorm';
 import { settingsStore } from '../../settings';
 import { getConnection } from '..';
 import { Track } from '../entity/track';
 import { Album } from '../entity/album';
+import { getTrack } from './getTrack';
 
 export const buildData = async () => {
   const connection = await getConnection();
@@ -43,24 +44,7 @@ export const buildData = async () => {
   const albumsToUpsert: Album[] = [];
   const tracksToUpsert: Track[] = await Promise.all(
     outdatedFileInfos.map(async ({ path, dateFileModified }) => {
-      const fileName = basename(path, extname(path));
-      const { format, common } = await parseFile(path, { duration: true });
-      const track: Track = {
-        path,
-        fileName,
-        dateFileModified,
-        duration: format.duration!,
-        number: common.track.no ?? undefined,
-        count: common.track.of ?? undefined,
-        diskNumber: common.disk.no ?? undefined,
-        diskCount: common.disk.of ?? undefined,
-        year: common.year,
-        artists: common.artist,
-        title: common.title,
-        albumArtists: common.albumartist,
-        albumTitle: common.album,
-      };
-
+      const track = await getTrack(path, dateFileModified);
       if (!track.albumTitle || !track.albumArtists) return track;
 
       let album = albumsToUpsert.find(
@@ -69,6 +53,13 @@ export const buildData = async () => {
       if (!album) {
         album = { artists: track.albumArtists, title: track.albumTitle };
         albumsToUpsert.push(album);
+        // add cover late so the first album adding is synchronous'ly
+        try {
+          const coverPath = join(dirname(path), 'cover.jpg');
+          const { mtimeMs } = await stat(coverPath);
+          album.coverPath = coverPath;
+          album.coverDateFileModified = mtimeMs;
+        } catch (_) {}
       }
 
       track.album = album;
