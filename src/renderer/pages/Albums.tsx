@@ -4,19 +4,28 @@ import classes from './Albums.module.css';
 export const Albums = () => {
   const [albums, setAlbums] = useState(window.audioData.getAlbums((albums) => setAlbums(albums)));
 
-  console.log(albums);
-
   return (
     <>
       <h1 class={classes.h1}>Albums ({albums.length})</h1>
       {albums.length ? (
-        <ul>
+        <ul class={classes.albums}>
           {albums.map((album) => (
-            <li>
-              {album.coverPath && (
-                <img src={'file:///' + album.coverPath} loading='lazy' width='200' />
-              )}
-              {album.title} by {album.artists}
+            <li key={album.artists + album.title} class={classes.album}>
+              <div class={classes.cover}>
+                {album.coverPath && (
+                  <img
+                    src={'file:///' + album.coverPath}
+                    alt={`${album.title} by ${album.artists}`}
+                    loading='lazy'
+                  />
+                )}
+              </div>
+              <h2 class={classes.albumTitle} title={album.title}>
+                {album.title}
+              </h2>
+              <small class={classes.albumArtists} title={album.artists}>
+                {album.artists}
+              </small>
             </li>
           ))}
         </ul>
