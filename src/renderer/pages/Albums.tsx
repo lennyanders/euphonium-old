@@ -16,7 +16,6 @@ export const Albums = () => {
                   <img
                     src={`file:///${album.previewCoverPath}`}
                     alt={`${album.title} by ${album.artists}`}
-                    loading='lazy'
                   />
                 )}
               </div>
