@@ -12,9 +12,9 @@ export const Albums = () => {
           {albums.map((album) => (
             <li key={album.artists + album.title} class={classes.album}>
               <div class={classes.cover}>
-                {album.coverPath && (
+                {album.previewCoverPath && (
                   <img
-                    src={'file:///' + album.coverPath}
+                    src={`file:///${album.previewCoverPath}`}
                     alt={`${album.title} by ${album.artists}`}
                     loading='lazy'
                   />

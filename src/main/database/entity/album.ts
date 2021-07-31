@@ -16,6 +16,9 @@ export class Album {
   @Column('integer', { nullable: true })
   coverDateFileModified?: number;
 
+  @Column('text', { nullable: true })
+  previewCoverPath?: string;
+
   @OneToMany(() => Track, (track) => track.albumArtists && track.albumTitle)
   tracks?: Track[];
 }

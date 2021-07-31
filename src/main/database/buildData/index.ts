@@ -1,12 +1,15 @@
-import { stat } from 'fs/promises';
+import { stat, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { totalist } from 'totalist';
 import { In, Not } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+import sharp from 'sharp';
 import { settingsStore } from '../../settings';
 import { getConnection } from '..';
 import { Track } from '../entity/track';
 import { Album } from '../entity/album';
 import { getTrack } from './getTrack';
+import { userDataPath } from '../../consts';
 
 export const buildData = async () => {
   const connection = await getConnection();
@@ -38,6 +41,13 @@ export const buildData = async () => {
   });
   console.timeEnd('get tracks that need updating');
 
+  console.time('remove not anymore existing albums from db');
+  await albumRepository.delete({
+    artists: Not(In(tracksInDb.map((track) => track.albumArtists).filter((a) => a) as string[])),
+    title: Not(In(tracksInDb.map((track) => track.albumTitle).filter((a) => a) as string[])),
+  });
+  console.timeEnd('remove not anymore existing albums from db');
+
   if (!outdatedFileInfos.length) return;
 
   console.time('get new track data');
@@ -51,25 +61,61 @@ export const buildData = async () => {
     );
   };
 
+  const findAlbumCover = async (
+    dir: string,
+    fileName = 'cover.jpg',
+  ): Promise<
+    Pick<Album, 'coverPath' | 'coverDateFileModified' | 'previewCoverPath'> | undefined
+  > => {
+    try {
+      const coverPath = join(dir, fileName);
+      const { mtimeMs } = await stat(coverPath);
+      return {
+        coverPath,
+        coverDateFileModified: mtimeMs,
+        previewCoverPath: join(userDataPath, 'albumCover', `${uuid()}.avif`),
+      };
+    } catch (_) {
+      if (fileName !== 'cover.png') return await findAlbumCover(dir, 'cover.png');
+    }
+  };
+
   console.time('get new album data');
   const albumsToUpsert: Album[] = [];
   const albumsInDb = await albumRepository.find();
   for (const track of tracksToUpsert) {
     if (!track.albumTitle || !track.albumArtists) continue;
 
-    let album = findAlbum(albumsToUpsert, track) || findAlbum(albumsInDb, track);
-    if (!album) {
-      album = { artists: track.albumArtists, title: track.albumTitle };
-      try {
-        const coverPath = join(dirname(track.path), 'cover.jpg');
-        const { mtimeMs } = await stat(coverPath);
-        album.coverPath = coverPath;
-        album.coverDateFileModified = mtimeMs;
-      } catch (_) {}
-      albumsToUpsert.push(album);
+    const album = findAlbum(albumsToUpsert, track) || findAlbum(albumsInDb, track);
+    if (album) {
+      // check albumcover datefile modified and update file if newer
+      continue;
     }
+
+    albumsToUpsert.push({
+      artists: track.albumArtists,
+      title: track.albumTitle,
+      ...(await findAlbumCover(dirname(track.path))),
+    });
   }
   console.timeEnd('get new album data');
+
+  console.time('generate album preview images');
+  await Promise.all(
+    albumsToUpsert.map(async (album) => {
+      if (!album.coverPath) return;
+      try {
+        await mkdir(dirname(album.previewCoverPath!), { recursive: true });
+        await sharp(album.coverPath, { failOnError: false })
+          .resize(500)
+          .avif()
+          .toFile(album.previewCoverPath!);
+      } catch (error) {
+        console.error(error);
+      }
+    }),
+  );
+  console.timeEnd('generate album preview images');
 
   console.time('save tracks and albums to db');
   await albumRepository.save(albumsToUpsert, { chunk: 100 });

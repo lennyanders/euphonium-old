@@ -13,9 +13,11 @@
   "license": "ISC",
   "devDependencies": {
     "@preact/preset-vite": "^2.1.0",
+    "@types/sharp": "^0.28.5",
+    "@types/uuid": "^8.3.1",
     "electron-rebuild": "^2.3.5",
     "electronmon": "^2.0.1",
-    "esbuild": "^0.12.5",
+    "esbuild": "^0.12.17",
     "vite": "^2.4.4"
   },
   "dependencies": {
@@ -25,7 +27,9 @@
     "electron-store": "^8.0.0",
     "music-metadata": "^7.8.7",
     "preact": "^10.5.14",
+    "sharp": "^0.28.3",
     "totalist": "^2.0.0",
-    "typeorm": "^0.2.34"
+    "typeorm": "^0.2.34",
+    "uuid": "^3.4.0"
   }
 }

@@ -22,10 +22,10 @@ const sharedBuildOptions = {
   }
 
   try {
-    await access('build');
+    await access('build/better_sqlite3.node');
   } catch (_) {
     execSync('npm run rebuild');
-    await mkdir('build');
+    await mkdir('build', { recursive: true });
     await copyFile(
       'node_modules/better-sqlite3/build/Release/better_sqlite3.node',
       'build/better_sqlite3.node',
@@ -37,7 +37,7 @@ const sharedBuildOptions = {
     entryPoints: ['src/main/index.ts'],
     platform: 'node',
     format: 'cjs',
-    external: ['electron'],
+    external: ['electron', 'sharp'],
     outfile: 'dist/main.cjs',
     watch: { onRebuild: () => app?.restart() },
   });
