@@ -34,25 +34,26 @@ export const buildData = async () => {
   console.timeEnd('remove not anymore existing tracks from db');
 
   console.time('get tracks that need updating');
-  const tracksInDb = await trackRepository.find({ select: ['path', 'dateFileModified'] });
+  const tracksInDb = await trackRepository.find({
+    select: ['path', 'dateFileModified', 'albumArtists', 'albumTitle'],
+  });
   const outdatedFileInfos = fileInfos.filter(({ path, dateFileModified }) => {
     const trackInDb = tracksInDb.find((trackInDb) => trackInDb.path === path);
     return !trackInDb || dateFileModified > trackInDb.dateFileModified;
   });
   console.timeEnd('get tracks that need updating');
 
-  console.time('remove not anymore existing albums from db');
-  await albumRepository.delete({
-    artists: Not(In(tracksInDb.map((track) => track.albumArtists).filter((a) => a) as string[])),
-    title: Not(In(tracksInDb.map((track) => track.albumTitle).filter((a) => a) as string[])),
-  });
-  console.timeEnd('remove not anymore existing albums from db');
-
-  if (!outdatedFileInfos.length) return;
-
   console.time('get new track data');
   const tracksToUpsert: Track[] = await Promise.all(outdatedFileInfos.map(getTrack));
   console.timeEnd('get new track data');
+
+  console.time('remove not anymore existing albums from db');
+  const allTracks = tracksInDb.concat(tracksToUpsert);
+  await albumRepository.delete({
+    artists: Not(In([...new Set(allTracks.map((track) => track.albumArtists!).filter((a) => a))])),
+    title: Not(In([...new Set(allTracks.map((track) => track.albumTitle!).filter((a) => a))])),
+  });
+  console.timeEnd('remove not anymore existing albums from db');
 
   const findAlbum = (albums: Album[], track: Track) => {
     if (!albums.length) return;
@@ -86,12 +87,20 @@ export const buildData = async () => {
   for (const track of tracksToUpsert) {
     if (!track.albumTitle || !track.albumArtists) continue;
 
-    const album = findAlbum(albumsToUpsert, track) || findAlbum(albumsInDb, track);
-    if (album) {
-      // check albumcover datefile modified and update file if newer
-      continue;
-    }
+    let albumToUpsert = findAlbum(albumsToUpsert, track);
+    if (albumToUpsert) continue;
 
+    const albumInDb = findAlbum(albumsInDb, track);
+    if (albumInDb?.coverPath) {
+      try {
+        const { mtimeMs } = await stat(albumInDb.coverPath);
+        if (mtimeMs > (albumInDb.coverDateFileModified || 0)) {
+          albumInDb.coverDateFileModified = mtimeMs;
+          albumsToUpsert.push(albumInDb);
+        }
+        continue; // skip cur album if albumCover is set and found
+      } catch (_) {}
+    }
     albumsToUpsert.push({
       artists: track.albumArtists,
       title: track.albumTitle,
