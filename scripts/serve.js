@@ -9,6 +9,9 @@ import electronmon from 'electronmon';
 const sharedBuildOptions = {
   bundle: true,
   minify: true,
+  platform: 'node',
+  format: 'cjs',
+  external: ['electron', 'sharp'],
   sourcemap: 'inline',
   logLevel: 'info',
   define: { 'process.env.NODE_ENV': JSON.stringify('development') },
@@ -35,9 +38,6 @@ const sharedBuildOptions = {
   await build({
     ...sharedBuildOptions,
     entryPoints: ['src/main/index.ts'],
-    platform: 'node',
-    format: 'cjs',
-    external: ['electron', 'sharp'],
     outfile: 'dist/main.cjs',
     watch: { onRebuild: () => app?.restart() },
   });
@@ -45,9 +45,6 @@ const sharedBuildOptions = {
   await build({
     ...sharedBuildOptions,
     entryPoints: ['src/preload/index.ts'],
-    platform: 'node',
-    format: 'cjs',
-    external: ['electron'],
     outfile: 'dist/preload.js',
     watch: { onRebuild: () => app?.reload() },
   });
