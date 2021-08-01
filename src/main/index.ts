@@ -8,6 +8,7 @@ import { getArtists } from './database/getArtists';
 import { getAlbums } from './database/getAlbums';
 import { getTracks } from './database/getTracks';
 import { getArtistData } from './database/getArtistData';
+import { handleContextMenus } from './contextMenu';
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -83,6 +84,8 @@ const createWindow = () => {
   ipcMain.on('getTracks', async (event) => {
     event.returnValue = await getTracks();
   });
+
+  handleContextMenus();
 };
 
 app.whenReady().then(() => {

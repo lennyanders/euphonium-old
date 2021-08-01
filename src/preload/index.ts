@@ -1,16 +1,18 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { get } from './utils';
+import type { MenuKey } from '../main/contextMenu';
 import type { Settings as AppSettings } from '../main/settings';
 import type { Artist } from '../main/database/getArtists';
 import type { Album } from '../main/database/entity/album';
 import type { RendererTrack } from '../main/database/getTracks';
-import { ArtistData } from '../main/database/getArtistData';
+import type { ArtistData } from '../main/database/getArtistData';
 
 const windowActions = {
   minimize: () => ipcRenderer.send('minimize'),
   maximize: () => ipcRenderer.send('maximize'),
   unmaximize: () => ipcRenderer.send('unmaximize'),
   close: () => ipcRenderer.send('close'),
+  showContextMenu: (menu: MenuKey) => ipcRenderer.send('showContextMenu', menu),
   getMaximizedState: get<boolean>('getMaximizedState', 'maximizedStateChanged'),
 };
 export type WindowActions = typeof windowActions;
