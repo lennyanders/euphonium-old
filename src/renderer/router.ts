@@ -1,7 +1,8 @@
 const listenersMap: Record<string, Function[]> = {};
 
 const handleRoute = () => {
-  const path = location.hash.slice(1);
+  const url = new URL(`file:///${location.hash.slice(1)}`);
+  const path = url.pathname;
   const listeners = listenersMap[path] || listenersMap['*'];
   listeners?.forEach((cb) => cb(path));
 };

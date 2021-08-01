@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { ArtistEntry } from '../components/artists/artistsEntry';
+import { ArtistEntry } from '../components/artists/ArtistEntry';
 import { VirtualScroller } from '../components/VirtualScroller';
 import classes from './Artists.module.css';
 
