@@ -7,6 +7,7 @@ import { buildData } from './database/buildData';
 import { getArtists } from './database/getArtists';
 import { getAlbums } from './database/getAlbums';
 import { getTracks } from './database/getTracks';
+import { getArtistData } from './database/getArtistData';
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -72,6 +73,9 @@ const createWindow = () => {
   ipcMain.on('rebuildAudioData', buildData);
   ipcMain.on('getArtists', async (event) => {
     event.returnValue = await getArtists();
+  });
+  ipcMain.on('getArtistData', async (event, artist: string) => {
+    event.returnValue = await getArtistData(artist);
   });
   ipcMain.on('getAlbums', async (event) => {
     event.returnValue = await getAlbums();
