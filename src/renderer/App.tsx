@@ -7,14 +7,16 @@ import { MainNavigation } from './components/MainNavigation';
 import { Player } from './components/Player';
 import classes from './App.module.css';
 
-import { Settings } from './pages/Settings';
-import { Songs } from './pages/Songs';
+import { Artists } from './pages/Artists';
 import { Albums } from './pages/Albums';
+import { Songs } from './pages/Songs';
+import { Settings } from './pages/Settings';
 
 const routes: Record<string, JSX.Element> = {
-  settings: <Settings />,
-  songs: <Songs />,
+  artists: <Artists />,
   albums: <Albums />,
+  songs: <Songs />,
+  settings: <Settings />,
 };
 
 const Page = ({ route }: { route: string }) => routes[route] || <>404</>;

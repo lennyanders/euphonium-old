@@ -4,8 +4,9 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import { isDev } from './consts';
 import { Settings, settingsStore } from './settings';
 import { buildData } from './database/buildData';
-import { getTracks } from './database/getTracks';
+import { getArtists } from './database/getArtists';
 import { getAlbums } from './database/getAlbums';
+import { getTracks } from './database/getTracks';
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -69,12 +70,14 @@ const createWindow = () => {
   });
 
   ipcMain.on('rebuildAudioData', buildData);
-  ipcMain.on('getTracks', async (event) => {
-    // const send = () => event.sender.send('tracksChanged', getTracks());
-    event.returnValue = await getTracks();
+  ipcMain.on('getArtists', async (event) => {
+    event.returnValue = await getArtists();
   });
   ipcMain.on('getAlbums', async (event) => {
     event.returnValue = await getAlbums();
+  });
+  ipcMain.on('getTracks', async (event) => {
+    event.returnValue = await getTracks();
   });
 };
 

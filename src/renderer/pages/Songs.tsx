@@ -1,7 +1,6 @@
 import { useState } from 'preact/hooks';
-import { VirtualScroller } from '../components/songs/VirtualScroller';
+import { VirtualScroller } from '../components/VirtualScroller';
 import { SongEntry } from '../components/songs/SongEntry';
-import { RendererTrack } from '../../main/database/getTracks';
 import classes from './Songs.module.css';
 
 export const Songs = () => {
@@ -12,7 +11,7 @@ export const Songs = () => {
       <h1 class={classes.h1}>Songs ({tracks.length})</h1>
       {tracks.length ? (
         <VirtualScroller rowHeight={24}>
-          {tracks.map((track: RendererTrack) => (
+          {tracks.map((track) => (
             <SongEntry key={track.path} track={track} />
           ))}
         </VirtualScroller>
