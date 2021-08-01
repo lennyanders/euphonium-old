@@ -83,6 +83,7 @@
 }
 
 .volume {
+  box-sizing: content-box;
   --width: 0.5rem;
   --height: 10rem;
   position: absolute;
