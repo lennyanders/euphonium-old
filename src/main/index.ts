@@ -28,7 +28,7 @@ const createWindow = () => {
     win.loadURL('http://localhost:9090/index.html#songs');
     win.webContents.openDevTools({ mode: 'detach' });
   } else {
-    win.loadFile('http://localhost:9090/index.html', { hash: 'songs' });
+    win.loadFile(join(__dirname, 'index.html'), { hash: 'songs' });
   }
 
   win.once('ready-to-show', () => win.show());

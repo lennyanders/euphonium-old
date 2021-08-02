@@ -1,11 +1,12 @@
 {
-  "name": "browser",
+  "name": "euphonium",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/main.cjs",
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.js",
+    "build": "node scripts/build.js",
     "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "keywords": [],
@@ -15,6 +16,8 @@
     "@preact/preset-vite": "^2.1.0",
     "@types/sharp": "^0.28.5",
     "@types/uuid": "^8.3.1",
+    "electron": "^13.1.7",
+    "electron-builder": "^22.11.7",
     "electron-rebuild": "^2.3.5",
     "electronmon": "^2.0.1",
     "esbuild": "^0.12.17",
@@ -23,7 +26,6 @@
   "dependencies": {
     "@mdi/js": "^5.9.55",
     "better-sqlite3": "^7.4.1",
-    "electron": "^13.0.1",
     "electron-store": "^8.0.0",
     "music-metadata": "^7.8.7",
     "preact": "^10.5.14",
