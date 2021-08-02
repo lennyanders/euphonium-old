@@ -10,16 +10,18 @@ const EVENT_OPTS = { passive: true, capture: true };
 export const VirtualScroller = ({
   tag = 'ul',
   rowHeight,
+  scrollContainer = document.documentElement,
   overscan = 10,
   children,
 }: {
   tag?: keyof JSX.IntrinsicElements;
   rowHeight: number;
+  scrollContainer?: HTMLElement;
   overscan?: number;
   children: ComponentChild[];
 }) => {
   const base = useRef<HTMLElement>(null);
-  const [windowHeight, setWindowHeight] = useState(0);
+  const [scrollContainerHeight, setScrollContainerHeight] = useState(0);
   const [offset, setOffset] = useState(0);
 
   const height = useMemo(() => rowHeight * children.length, [rowHeight, children.length]);
@@ -28,30 +30,32 @@ export const VirtualScroller = ({
     return Math.max(0, startWithoutOverscan - (startWithoutOverscan % overscan));
   }, [offset, rowHeight, overscan]);
   const visibleRowsCount = useMemo(
-    () => ((windowHeight / rowHeight) | 0) + overscan,
-    [windowHeight, rowHeight],
+    () => ((scrollContainerHeight / rowHeight) | 0) + overscan,
+    [scrollContainerHeight, rowHeight],
   );
   const visible = useMemo(
     () => children.slice(start, start + visibleRowsCount + 1),
     [start, visibleRowsCount],
   );
 
-  const resized = () => setWindowHeight(window.innerHeight);
   const scrolled = () => {
     setOffset(Math.max(0, base.current ? -base.current.getBoundingClientRect().top : 0));
   };
 
   useLayoutEffect(() => {
-    resized();
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      setScrollContainerHeight(entry.borderBoxSize[0].blockSize);
+    });
+    resizeObserver.observe(scrollContainer);
+
     scrolled();
-    window.addEventListener('resize', resized, EVENT_OPTS);
-    window.addEventListener('scroll', scrolled, EVENT_OPTS);
+    scrollContainer.addEventListener('scroll', scrolled, EVENT_OPTS);
 
     return () => {
-      window.removeEventListener('resize', resized, EVENT_OPTS);
-      window.removeEventListener('scroll', scrolled, EVENT_OPTS);
+      resizeObserver.disconnect();
+      scrollContainer.removeEventListener('scroll', scrolled, EVENT_OPTS);
     };
-  }, []);
+  }, [scrollContainer]);
 
   const El = tag;
   return (
