@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { Album } from '../components/albums/Album';
 import classes from './Albums.module.css';
 
 export const Albums = () => {
@@ -10,22 +11,7 @@ export const Albums = () => {
       {albums.length ? (
         <ul class={classes.albums}>
           {albums.map((album) => (
-            <li key={album.artists + album.title} class={classes.album}>
-              <div class={classes.cover}>
-                {album.previewCoverPath && (
-                  <img
-                    src={`file:///${album.previewCoverPath}`}
-                    alt={`${album.title} by ${album.artists}`}
-                  />
-                )}
-              </div>
-              <h2 class={classes.albumTitle} title={album.title}>
-                {album.title}
-              </h2>
-              <small class={classes.albumArtists} title={album.artists}>
-                {album.artists}
-              </small>
-            </li>
+            <Album key={album.artists + album.title} album={album} />
           ))}
         </ul>
       ) : (
