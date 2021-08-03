@@ -1,0 +1,24 @@
+.albums {
+  padding: 0 3rem 0.75rem;
+  margin: 0 -3rem;
+  display: flex;
+  gap: 1.5rem;
+  overflow: auto;
+}
+
+.albums > * {
+  width: 9rem;
+  flex: 0 0 9rem;
+}
+
+.albums::-webkit-scrollbar-button {
+  width: 1.5rem;
+}
+
+.albums::-webkit-scrollbar {
+  height: 0.5rem;
+}
+
+.albums::-webkit-scrollbar-thumb {
+  background-color: #333;
+}

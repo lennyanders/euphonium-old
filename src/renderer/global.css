@@ -18,7 +18,7 @@ body {
   overflow: hidden;
 }
 
-ul[class] {
+ul:where([class]) {
   list-style: none;
   margin: 0;
   padding: 0;
