@@ -1,10 +1,18 @@
+import { useState } from 'preact/hooks';
 import { Album as AlbumEntity } from '../../../main/database/entity/album';
 import classes from './Album.module.css';
 
-export const Album = ({ album }: { album: AlbumEntity }) => (
-  <li class={classes.album}>
+const Cover = ({ album }: { album: AlbumEntity }) => {
+  if (!album.previewCoverPath) return <div class={classes.cover} />;
+
+  const [showCover, setShowCover] = useState(false);
+  const image = new Image(1, 1);
+  image.src = album.previewCoverPath;
+  image.decode().then(() => setShowCover(true));
+
+  return (
     <div class={classes.cover}>
-      {album.previewCoverPath && (
+      {showCover && (
         <img
           class={classes.coverImage}
           src={`file:///${album.previewCoverPath}`}
@@ -14,6 +22,12 @@ export const Album = ({ album }: { album: AlbumEntity }) => (
         />
       )}
     </div>
+  );
+};
+
+export const Album = ({ album }: { album: AlbumEntity }) => (
+  <li class={classes.album}>
+    <Cover album={album} />
     <h2 class={classes.albumTitle} title={album.title}>
       {album.title}
     </h2>
