@@ -97,33 +97,36 @@ export const Player = () => {
 
   return (
     <div class={classes.player}>
-      <div
-        class={classes.progress}
-        style={{ '--progress': `${(progress / track.duration) * 100}%` }}
-      >
-        <div class={classes.progressValue}></div>
-        <input
-          class={classes.progressInput}
-          type='range'
-          min='0'
-          value={progress}
-          max={track.duration}
-          onInput={setProgressUI}
-        />
-      </div>
       <div class={classes.info}>
         <span>{track.title}</span>
         <span>{track.artists}</span>
       </div>
-      <div class={classes.controls}>
-        <Button path={mdiSkipPrevious} />
-        <Button onClick={playPause} path={isPlaying ? mdiPause : mdiPlay} />
-        <Button path={mdiSkipNext} />
+      <div>
+        <div class={classes.controls}>
+          <Button path={mdiSkipPrevious} />
+          <Button onClick={playPause} path={isPlaying ? mdiPause : mdiPlay} />
+          <Button path={mdiSkipNext} />
+        </div>
+        <div class={classes.progressWrapper}>
+          <span>{getFormattedTime(progress)}</span>
+          <div
+            class={classes.progress}
+            style={{ '--progress': `${(progress / track.duration) * 100}%` }}
+          >
+            <div class={classes.progressHandle}></div>
+            <input
+              class={classes.progressInput}
+              type='range'
+              min='0'
+              value={progress}
+              max={track.duration}
+              onInput={setProgressUI}
+            />
+          </div>
+          <span>{track.durationFormatted}</span>
+        </div>
       </div>
       <div class={classes.options}>
-        <span>
-          {getFormattedTime(progress)}/{track.durationFormatted}
-        </span>
         <div class={classes.audio}>
           <Button
             class={isMuted ? classes.muted : ''}

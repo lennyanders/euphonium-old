@@ -1,7 +1,7 @@
 .root {
   overflow-y: auto;
-  margin: -2rem 0;
-  padding: 3rem 6rem 3rem 3rem;
+  margin: -5rem 0;
+  padding: 6rem 6rem 6rem 3rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
