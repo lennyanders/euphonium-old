@@ -9,6 +9,7 @@ import {
   mdiVolumeMedium,
 } from '@mdi/js';
 import { Icon } from './icon';
+import { Progress } from './Progress';
 import { RendererTrack } from '../../main/database/getTracks';
 import { getFormattedTime } from '../../shared/utils';
 import type { Props } from '../utils';
@@ -109,20 +110,7 @@ export const Player = () => {
         </div>
         <div class={classes.progressWrapper}>
           <span>{getFormattedTime(progress)}</span>
-          <div
-            class={classes.progress}
-            style={{ '--progress': `${(progress / track.duration) * 100}%` }}
-          >
-            <div class={classes.progressHandle}></div>
-            <input
-              class={classes.progressInput}
-              type='range'
-              min='0'
-              value={progress}
-              max={track.duration}
-              onInput={setProgressUI}
-            />
-          </div>
+          <Progress value={progress} max={track.duration} onInput={setProgressUI} />
           <span>{track.durationFormatted}</span>
         </div>
       </div>
