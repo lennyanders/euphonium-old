@@ -121,16 +121,8 @@ export const Player = () => {
             onClick={muteUnmute}
             path={volume < 0.25 ? mdiVolumeLow : volume > 0.75 ? mdiVolumeHigh : mdiVolumeMedium}
           />
-          <div class={classes.volume} style={{ '--progress': `${volume * 100}%` }}>
-            <input
-              class={classes.volumeInput}
-              type='range'
-              min='0'
-              value={volume}
-              max='1'
-              step='0.01'
-              onInput={setVolumeUI}
-            />
+          <div class={classes.volume}>
+            <Progress vertical value={volume} max={1} step={0.01} onInput={setVolumeUI} />
           </div>
         </div>
       </div>
