@@ -2,16 +2,11 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
-    "types": ["vite/client"],
     "moduleResolution": "Node",
     "strict": true,
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "jsxImportSource": "preact",
-    "jsx": "preserve",
-    "jsxFactory": "h",
-    "jsxFragmentFactory": "Fragment"
+    "experimentalDecorators": true
   }
 }
