@@ -1,18 +1,20 @@
 .progress {
   --thickness: 0.5rem;
+  --half-thickness: calc(var(--thickness) / 2);
   position: relative;
   color: #2962ff;
   height: var(--thickness);
   background-color: #333;
-  border-radius: calc(var(--thickness) / 2);
+  border-radius: var(--half-thickness);
 }
 
-.progress::before {
+.progress::before,
+.progress-handle::after {
   content: '';
   position: absolute;
   left: 0;
-  height: 100%;
-  aspect-ratio: 1;
+  height: var(--thickness);
+  width: var(--thickness);
   border-radius: 50%;
   background-color: currentColor;
 }
@@ -37,13 +39,8 @@
 }
 
 .progress-handle::after {
-  content: '';
-  position: absolute;
+  left: auto;
   right: 0;
-  height: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background-color: currentColor;
   transition: transform 0.2s ease;
 }
 
@@ -56,8 +53,45 @@
   height: 100%;
   width: 100%;
   left: 0;
-  padding: 0 calc(var(--thickness) / 2);
+  padding: 0 var(--half-thickness);
   margin: 0;
   opacity: 0;
   z-index: 1;
+}
+
+.progress-vertical {
+  width: var(--thickness);
+  height: var(--verticalSize);
+}
+
+.progress-vertical::after {
+  left: 0;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 100%;
+  height: auto;
+  transform-origin: bottom;
+  transform: scaleY(var(--progress));
+}
+
+.progress-vertical .progress-input {
+  transform-origin: 0 0;
+  transform: rotate(-0.25turn) translateX(-100%);
+  width: var(--verticalSize);
+  height: var(--thickness);
+}
+
+.progress-vertical::before {
+  bottom: 0;
+}
+
+.progress-vertical .progress-handle::after {
+  top: 0;
+}
+
+.progress-vertical .progress-handle {
+  top: 0;
+  height: auto;
+  bottom: var(--thickness);
+  transform: translateY(calc(100% - var(--progress)));
 }
