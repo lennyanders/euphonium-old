@@ -9,6 +9,7 @@ import { getAlbums } from './database/getAlbums';
 import { getTracks } from './database/getTracks';
 import { getArtistData } from './database/getArtistData';
 import { handleContextMenus } from './contextMenu';
+import { getAlbumWithTracks } from './database/getAlbumWithTracks';
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -80,6 +81,9 @@ const createWindow = () => {
   });
   ipcMain.on('getAlbums', async (event) => {
     event.returnValue = await getAlbums();
+  });
+  ipcMain.on('getAlbumWithTracks', async (event, artist: string, title: string) => {
+    event.returnValue = await getAlbumWithTracks(artist, title);
   });
   ipcMain.on('getTracks', async (event) => {
     event.returnValue = await getTracks();

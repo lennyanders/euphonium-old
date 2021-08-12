@@ -1,20 +1,15 @@
 import type { FindManyOptions } from 'typeorm';
 import { getConnection } from '../database';
-import { getFormattedTime } from '../../shared/utils';
 import { Track } from './entity/track';
+import { dbTrackToRendererTrack } from './converters/dbTrackToRendererTrack';
 
-type _Track = Pick<Track, 'path' | 'artists' | 'title' | 'duration'>;
-export type RendererTrack = _Track & { durationFormatted: string };
+export type RendererTrack = Pick<Track, 'artists' | 'title' | 'duration'> & {
+  durationFormatted: string;
+};
 
 export const getTracks = async (partialFindManyOption: Partial<FindManyOptions<Track>> = {}) => {
   const trackRepository = (await getConnection()).getRepository(Track);
-  const dbTracks: _Track[] = await trackRepository.find({
-    select: ['path', 'artists', 'title', 'duration'],
-    ...partialFindManyOption,
-  });
+  const dbTracks: Track[] = await trackRepository.find(partialFindManyOption);
 
-  return dbTracks.map<RendererTrack>((track) => ({
-    ...track,
-    durationFormatted: getFormattedTime(track.duration),
-  }));
+  return dbTracks.map(dbTrackToRendererTrack);
 };

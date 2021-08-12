@@ -1,0 +1,22 @@
+.header {
+}
+
+.header::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.cover {
+  width: 8rem;
+  margin-right: 1rem;
+  float: left;
+}
+
+.title {
+  margin-top: 0;
+}
+
+/* .artist {
+  display: block;
+} */

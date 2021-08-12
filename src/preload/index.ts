@@ -6,6 +6,7 @@ import type { Artist } from '../main/database/getArtists';
 import type { Album } from '../main/database/entity/album';
 import type { RendererTrack } from '../main/database/getTracks';
 import type { ArtistData } from '../main/database/getArtistData';
+import { AlbumWithTracks } from '../main/database/getAlbumWithTracks';
 
 const windowActions = {
   minimize: () => ipcRenderer.send('minimize'),
@@ -30,6 +31,9 @@ const audioData = {
   rebuild: () => ipcRenderer.send('rebuildAudioData'),
   getArtists: get<Artist[]>('getArtists', 'artistsChanged'),
   getArtistData: (artist: string) => ipcRenderer.sendSync('getArtistData', artist) as ArtistData,
+  getAlbumWithTracks: (artist: string, title: string) => {
+    return ipcRenderer.sendSync('getAlbumWithTracks', artist, title) as AlbumWithTracks;
+  },
   getAlbums: get<Album[]>('getAlbums', 'albumsChanged'),
   getTracks: get<RendererTrack[]>('getTracks', 'tracksChanged'),
 };
