@@ -43,6 +43,6 @@ export class Track {
   @Column('text', { nullable: true })
   albumTitle?: string;
 
-  @ManyToOne(() => Album, (album) => album.artists && album.title)
+  @ManyToOne(() => Album, (album) => album.tracks)
   album?: Album;
 }

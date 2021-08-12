@@ -19,6 +19,6 @@ export class Album {
   @Column('text', { nullable: true })
   previewCoverPath?: string;
 
-  @OneToMany(() => Track, (track) => track.albumArtists && track.albumTitle)
+  @OneToMany(() => Track, (track) => track.album)
   tracks?: Track[];
 }
